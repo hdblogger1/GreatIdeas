@@ -10,10 +10,11 @@ namespace SB6_CSharp
         {
             // *** Just uncomment the example you wish to run ***
             
-            using(var example = new Example_02L01() )
+            //using(var example = new Example_02L01() )
             //using(var example = new Example_02L02() )
             //using(var example = new Example_02L03_02L07() )
             //using(var example = new Example_02L08_02L09() )
+            using(var example = new Example_03L01_03L02() )
             {
                 //Run the example
                 example.Run();
