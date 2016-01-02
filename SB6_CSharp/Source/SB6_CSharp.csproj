@@ -47,12 +47,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Example_02L01.cs" />
-    <Compile Include="Example_02L02.cs" />
-    <Compile Include="Example_02L03_02L07.cs" />
-    <Compile Include="Example_02L08_02L09.cs" />
+    <Compile Include="Chapter02\Example_02L01.cs" />
+    <Compile Include="Chapter02\Example_02L02.cs" />
+    <Compile Include="Chapter02\Example_02L03_02L07.cs" />
+    <Compile Include="Chapter02\Example_02L08_02L09.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Chapter03\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

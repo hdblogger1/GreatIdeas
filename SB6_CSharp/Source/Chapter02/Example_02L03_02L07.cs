@@ -7,10 +7,10 @@ using OpenTK.Graphics.OpenGL;
 
 namespace SB6_CSharp
 {
-    class Example_02L08_02L09 : GameWindow
+    class Example_02L03_02L07 : GameWindow
     {
         //Counter for holding elapsed time since application instantiation
-        Stopwatch _stopwatch = Stopwatch.StartNew();
+        Stopwatch _counter = Stopwatch.StartNew();
 
         float[] _color = new float[] { 1.0f, 0.0f, 0.0f, 1.0f };
 
@@ -26,21 +26,16 @@ namespace SB6_CSharp
             //Source code for vertex shader
             string vertexShaderSource = @"
                 #version 430 core
-
                 void main(void)
                 {
-                    // Declare a hard-coded array of positions
-                    const vec4 vertices[3] = vec4[3](vec4( 0.25, -0.25, 0.5, 1.0),
-                                                     vec4(-0.25, -0.25, 0.5, 1.0),
-                                                     vec4( 0.25,  0.25, 0.5, 1.0));
-                    // Index into our array using gl_VertexID
-                    gl_Position = vertices[gl_VertexID];
+                    gl_Position = vec4(0.0, 0.0, 0.5, 1.0);
                 }
                 ";
                 
             //Source code for fragment shader
             string fragmentShaderSource = @"
                 #version 430 core
+
                 out vec4 color;
 
                 void main(void)
@@ -95,9 +90,9 @@ namespace SB6_CSharp
         //Our rendering function
         protected override void OnRenderFrame(FrameEventArgs e)
         {
-            //Set color to green
-            _color[0] = 0.0f;
-            _color[1] = 0.2f;
+            //Animate color
+            _color[0] = (float) (Math.Sin(_counter.Elapsed.Seconds) * 0.5f + 0.5f);
+            _color[1] = (float) (Math.Cos(_counter.Elapsed.Seconds) * 0.5f + 0.5f);
             
             //Clear the window with given color
             GL.ClearBuffer(ClearBuffer.Color, 0, _color);
@@ -105,8 +100,11 @@ namespace SB6_CSharp
             //Use the program object we created earlier for rendering
             GL.UseProgram(_renderingProgramHandle);
 
-            //Draw one triangle
-            GL.DrawArrays(PrimitiveType.Triangles, 0, 3);
+            //Uncomment the following to set point size to at least 64 pixels
+            //GL.PointSize(40.0f);
+
+            //Draw one point
+            GL.DrawArrays(PrimitiveType.Points, 0, 1);
             
             SwapBuffers();
         }
