@@ -15,6 +15,14 @@ namespace SB6_CSharp
         private int _vaoHandle;
 
         //-----------------------------------------------------------------------------------------
+        public Example_02L08_02L09() 
+            : base( 640, 480, GraphicsMode.Default, "OpenTK Example", 0, DisplayDevice.Default
+                    // ask for an OpenGL 3.2 or higher default(core?) context
+                    , 3, 2, GraphicsContextFlags.Default)
+        {
+        }
+        
+        //-----------------------------------------------------------------------------------------
         public int CompileShaders()
         {
             int vertexShaderHandle, fragmentShaderHandle;

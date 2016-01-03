@@ -9,11 +9,19 @@ namespace SB6_CSharp
 {
     class Example_03L01_03L02 : GameWindow
     {
-        Stopwatch _counter = Stopwatch.StartNew();
+        
         float[] _color = new float[] { 1.0f, 0.0f, 0.0f, 1.0f };
 
         private int _renderingProgramHandle;
         private int _vaoHandle;
+
+        //-----------------------------------------------------------------------------------------
+        public Example_03L01_03L02() 
+            : base( 640, 480, GraphicsMode.Default, "OpenTK Example", 0, DisplayDevice.Default
+                    // ask for an OpenGL 3.2 or higher default(core?) context
+                    , 3, 2, GraphicsContextFlags.Default)
+        {
+        }
 
         //-----------------------------------------------------------------------------------------
         public int CompileShaders()
@@ -96,18 +104,21 @@ namespace SB6_CSharp
         //Our rendering function
         protected override void OnRenderFrame(FrameEventArgs e)
         {
-            //Animate color
-            _color[0] = (float) (Math.Sin(_counter.Elapsed.Seconds) * 0.5f + 0.5f);
-            _color[1] = (float) (Math.Cos(_counter.Elapsed.Seconds) * 0.5f + 0.5f);
+            //Get elapsed time since application startup
+            double elapsedSeconds = Program.Counter.ElapsedMilliseconds / 1000.0;
             
+            //Animate color
+            _color[0] = (float) (Math.Sin(elapsedSeconds) * 0.5f + 0.5f);
+            _color[1] = (float) (Math.Cos(elapsedSeconds) * 0.5f + 0.5f);
+          
             //Clear the window with given color
             GL.ClearBuffer(ClearBuffer.Color, 0, _color);
  
             //Use the program object we created earlier for rendering
             GL.UseProgram(_renderingProgramHandle);
 
-            float[] attrib = new float[4] { (float)(Math.Sin(_counter.Elapsed.Seconds) * 0.5f),
-                                            (float)(Math.Cos(_counter.Elapsed.Seconds) * 0.6f),
+            float[] attrib = new float[4] { (float)(Math.Sin(elapsedSeconds) * 0.5f),
+                                            (float)(Math.Cos(elapsedSeconds) * 0.6f),
                                             0.0f, 0.0f };
             
             //Update the value of input attribute 0

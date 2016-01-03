@@ -9,17 +9,26 @@ namespace SB6_CSharp
 {
     class Example_02L02 : GameWindow
     {
-        //Counter for holding elapsed time since application instantiation
-        Stopwatch _counter = Stopwatch.StartNew();
-
-        float[] _color = new float[] { 1.0f, 0.0f, 0.0f, 1.0f };
+        static readonly float[] _color = new float[] { 1.0f, 0.0f, 0.0f, 1.0f };
         
+        //-----------------------------------------------------------------------------------------
+        public Example_02L02() 
+            : base( 640, 480, GraphicsMode.Default, "OpenTK Example", 0, DisplayDevice.Default
+                    // ask for an OpenGL 3.2 or higher default(core?) context
+                    , 3, 2, GraphicsContextFlags.Default)
+        {
+        }
+        
+        //-----------------------------------------------------------------------------------------
         //Our rendering function
         protected override void OnRenderFrame(FrameEventArgs e)
         {
+            //Get elapsed time since application startup
+            double elapsedSeconds = Program.Counter.ElapsedMilliseconds / 1000.0;
+            
             //Animate color
-            _color[0] = (float) (Math.Sin(_counter.Elapsed.Seconds) * 0.5f + 0.5f);
-            _color[1] = (float) (Math.Cos(_counter.Elapsed.Seconds) * 0.5f + 0.5f);
+            _color[0] = (float) (Math.Sin(elapsedSeconds) * 0.5f + 0.5f);
+            _color[1] = (float) (Math.Cos(elapsedSeconds) * 0.5f + 0.5f);
             
             //Clear the window with given color
             GL.ClearBuffer(ClearBuffer.Color, 0, _color);
