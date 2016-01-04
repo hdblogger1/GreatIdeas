@@ -11,14 +11,14 @@ namespace SB6_CSharp
     {
         float[] _color = new float[] { 1.0f, 0.0f, 0.0f, 1.0f };
 
-        private int _renderingProgramHandle;
-        private int _vaoHandle;
+        int _renderingProgramHandle;
+        int _vaoHandle;
 
         //-----------------------------------------------------------------------------------------
         public Example_02L03_02L07() 
             : base( 640, 480, GraphicsMode.Default, "OpenTK Example", 0, DisplayDevice.Default
-                    // ask for an OpenGL 3.2 or higher default(core?) context
-                    , 3, 2, GraphicsContextFlags.Default)
+                    // ask for an OpenGL 4.3 or higher default(core?) context
+                    , 4, 3, GraphicsContextFlags.Default)
         {
         }
         
@@ -40,9 +40,7 @@ namespace SB6_CSharp
             //Source code for fragment shader
             string fragmentShaderSource = @"
                 #version 430 core
-
                 out vec4 color;
-
                 void main(void)
                 {
                     color = vec4(0.0, 0.8, 1.0, 1.0);

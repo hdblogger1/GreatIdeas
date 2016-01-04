@@ -7,7 +7,7 @@ using OpenTK.Graphics.OpenGL;
 
 namespace SB6_CSharp
 {
-    class Example_02L08_02L09 : GameWindow
+    class Example_03L11_03L12 : GameWindow
     {
         float[] _color = new float[] { 1.0f, 0.0f, 0.0f, 1.0f };
 
@@ -15,7 +15,7 @@ namespace SB6_CSharp
         int _vaoHandle;
 
         //-----------------------------------------------------------------------------------------
-        public Example_02L08_02L09() 
+        public Example_03L11_03L12() 
             : base( 640, 480, GraphicsMode.Default, "OpenTK Example", 0, DisplayDevice.Default
                     // ask for an OpenGL 4.3 or higher default(core?) context
                     , 4, 3, GraphicsContextFlags.Default)
@@ -32,25 +32,38 @@ namespace SB6_CSharp
             string vertexShaderSource = @"
                 #version 430 core
 
+                // 'vs_color' is an output that will be sent to the next shader stage
+                out vec4 vs_color;
+
                 void main(void)
                 {
-                    // Declare a hard-coded array of positions
                     const vec4 vertices[3] = vec4[3](vec4( 0.25, -0.25, 0.5, 1.0),
                                                      vec4(-0.25, -0.25, 0.5, 1.0),
                                                      vec4( 0.25,  0.25, 0.5, 1.0));
+                    const vec4 colors[] = vec4[3](vec4(1.0, 0.0, 0.0, 1.0),
+                                                  vec4(0.0, 1.0, 0.0, 1.0),
+                                                  vec4(0.0, 0.0, 1.0, 1.0));                    
+
                     // Index into our array using gl_VertexID
                     gl_Position = vertices[gl_VertexID];
+                    
+                    // Output an indexed value for vs_color
+                    vs_color = colors[gl_VertexID];
                 }
                 ";
                 
             //Source code for fragment shader
             string fragmentShaderSource = @"
                 #version 430 core
+
+                //'vs_color' is the color produced by the vertex shader
+                in vec4 vs_color;
+
                 out vec4 color;
 
                 void main(void)
                 {
-                    color = vec4(0.0, 0.8, 1.0, 1.0);
+                    color = vs_color;
                 }
                 ";
 

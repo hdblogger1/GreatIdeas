@@ -52,6 +52,12 @@
     <Compile Include="Chapter02\Example_02L03_02L07.cs" />
     <Compile Include="Chapter02\Example_02L08_02L09.cs" />
     <Compile Include="Chapter03\Example_03L01_03L02.cs" />
+    <Compile Include="Chapter03\Example_03L03_03L04.cs" />
+    <Compile Include="Chapter03\Example_03L05_03L06.cs" />
+    <Compile Include="Chapter03\Example_03L07_03L08.cs" />
+    <Compile Include="Chapter03\Example_03L09.cs" />
+    <Compile Include="Chapter03\Example_03L10.cs" />
+    <Compile Include="Chapter03\Example_03L11_03L12.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
