@@ -19,15 +19,6 @@ namespace SB6_CSharp
         int _mvLocation, _projLocation;
         Matrix4 _projMatrix;
 
-        struct Vertex
-        {
-            public float x, y, z; // Position
-            public float r, g, b; // Color
-
-            public const int Size = 6 * sizeof(float);
-            public const int ColorOffset = 3 * sizeof(float);
-        };
-
         //-----------------------------------------------------------------------------------------
         public Example_05L26() 
             : base( 800, 600, GraphicsMode.Default, "OpenTK Example", 0, DisplayDevice.Default

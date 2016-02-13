@@ -19,15 +19,6 @@ namespace SB6_CSharp
         int _mvLocation, _projLocation;
         Matrix4 _projMatrix;
 
-        struct Vertex
-        {
-            public float x, y, z; // Position
-            public float r, g, b; // Color
-
-            public const int Size = 6 * sizeof(float);
-            public const int ColorOffset = 3 * sizeof(float);
-        };
-
         //-----------------------------------------------------------------------------------------
         public Example_05L20_05L25() 
             : base( 800, 600, GraphicsMode.Default, "OpenTK Example", 0, DisplayDevice.Default
@@ -109,6 +100,7 @@ namespace SB6_CSharp
         protected override void OnResize(EventArgs e)
         {
             base.OnResize(e);
+            GL.Viewport(ClientRectangle.X, ClientRectangle.Y, ClientRectangle.Width, ClientRectangle.Height);
             float aspect = (float)Width / (float)Height;
             _projMatrix = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(50.0f), aspect, 0.1f, 1000.0f);
         }
@@ -159,9 +151,6 @@ namespace SB6_CSharp
 
             GL.Enable(EnableCap.CullFace);
             GL.FrontFace(FrontFaceDirection.Cw);
-
-            //GL.Enable(EnableCap.DepthTest);
-            //GL.DepthFunc(DepthFunction.Lequal);
         }
 
         //-----------------------------------------------------------------------------------------

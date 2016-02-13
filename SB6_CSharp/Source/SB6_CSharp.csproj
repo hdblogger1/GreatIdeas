@@ -61,6 +61,7 @@
     <Compile Include="Chapter05\Example_05L08.cs" />
     <Compile Include="Chapter05\Example_05L20_05L25.cs" />
     <Compile Include="Chapter05\Example_05L26.cs" />
+    <Compile Include="Chapter05\Example_05L09_05L17.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
