@@ -5,11 +5,11 @@
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{F7D7806E-3ED7-4DC5-B247-3CC146654343}</ProjectGuid>
+    <ProjectGuid>{5C936130-B3BF-4AC5-96ED-7BFB0F2B93BF}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SB6_CSharp</RootNamespace>
-    <AssemblyName>SB6_CSharp</AssemblyName>
+    <RootNamespace>OGL_SP</RootNamespace>
+    <AssemblyName>OGL-SP</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
@@ -23,7 +23,6 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -45,28 +44,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Example_02L01\Example_02L01.cs" />
-    <Compile Include="Example_02L02\Example_02L02.cs" />
-    <Compile Include="Example_02L03_02L07\Example_02L03_02L07.cs" />
-    <Compile Include="Example_02L08_02L09\Example_02L08_02L09.cs" />
-    <Compile Include="Example_03L01_03L02\Example_03L01_03L02.cs" />
-    <Compile Include="Example_03L03_03L04\Example_03L03_03L04.cs" />
-    <Compile Include="Example_03L05_03L06\Example_03L05_03L06.cs" />
-    <Compile Include="Example_03L07_03L08\Example_03L07_03L08.cs" />
-    <Compile Include="Example_03L09\Example_03L09.cs" />
-    <Compile Include="Example_03L10\Example_03L10.cs" />
-    <Compile Include="Example_03L11_03L12\Example_03L11_03L12.cs" />
-    <Compile Include="Example_05L01_05L05\Example_05L01_05L05.cs" />
-    <Compile Include="Example_05L06_05L07\Example_05L06_05L07.cs" />
-    <Compile Include="Example_05L08\Example_05L08.cs" />
-    <Compile Include="Example_05L20_05L25\Example_05L20_05L25.cs" />
-    <Compile Include="Example_05L26\Example_05L26.cs" />
-    <Compile Include="Example_05L09_05L17\Example_05L09_05L17.cs" />
-    <Compile Include="Example_05L27_05L28\Example_05L27_05L28.cs" />
-    <Compile Include="Example_05L29_05L32\Example_05L29_05L32.cs" />
-    <Compile Include="BasicAtomicCounters\BasicAtomicCounters.cs" />
+    <Compile Include="Getopt.cs" />
+    <Compile Include="GL430\gl-430-atomic-counter.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Framework\Test.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Local\opentk-2014-07-23\Source\OpenTK\OpenTK.csproj">
@@ -74,7 +56,6 @@
       <Name>OpenTK</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

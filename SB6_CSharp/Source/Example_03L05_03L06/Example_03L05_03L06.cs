@@ -7,7 +7,7 @@ using OpenTK.Graphics.OpenGL;
 
 namespace SB6_CSharp
 {
-    class Example_03L09 : GameWindow
+    class Example_03L05_03L06 : GameWindow
     {
         
         float[] _color = new float[] { 1.0f, 0.0f, 0.0f, 1.0f };
@@ -16,7 +16,7 @@ namespace SB6_CSharp
         int _vaoHandle;
 
         //-----------------------------------------------------------------------------------------
-        public Example_03L09() 
+        public Example_03L05_03L06() 
             : base( 640, 480, GraphicsMode.Default, "OpenTK Example", 0, DisplayDevice.Default
                     // ask for an OpenGL 4.3 or higher default(core?) context
                     , 4, 3, GraphicsContextFlags.Default)
@@ -27,13 +27,21 @@ namespace SB6_CSharp
         public int CompileShaders()
         {
             int vertexShaderHandle, fragmentShaderHandle;
-            int tessCtrlShaderHandle, tessEvalShaderHandle;
-            int geomShaderHandle;
             int shaderProgramHandle;
                 
             //Source code for vertex shader
             string vertexShaderSource = @"
                 #version 430 core
+
+                // 'offset' is an input vertex attribute
+                layout (location = 0) in vec4 offset;
+                layout (location = 1) in vec4 color;
+
+                // Declare VS_OUT as an output interface block
+                out VS_OUT
+                {
+                    vec4 color; // Send color to the next stage
+                } vs_out;
 
                 void main(void)
                 {
@@ -42,71 +50,31 @@ namespace SB6_CSharp
                                                      vec4(-0.25, -0.25, 0.5, 1.0),
                                                      vec4( 0.25,  0.25, 0.5, 1.0));
                     
-                    gl_Position = vertices[gl_VertexID];
+                    // Add 'offset' to our hard-coded vertex position
+                    gl_Position = vertices[gl_VertexID] + offset;
+                    
+                    // Output a fixed value for vs_out.color
+                    vs_out.color = color;
                 }
                 ";
-
-            //Source code for tessellation control shader
-            string tessCtrlShaderSource = @"
-                #version 430 core
                 
-                layout (vertices = 3) out;
-                
-                void main(void)
-                {
-                    if(gl_InvocationID == 0)
-                    {
-                        gl_TessLevelInner[0] = 5.0;
-                        gl_TessLevelOuter[0] = 5.0;
-                        gl_TessLevelOuter[1] = 5.0;
-                        gl_TessLevelOuter[2] = 5.0;
-                    }
-                    gl_out[gl_InvocationID].gl_Position = gl_in[gl_InvocationID].gl_Position;
-                }
-            ";
-
-            //Source code for tessellation control shader
-            string tessEvalShaderSource = @"
-                #version 430 core
-                
-                layout (triangles, equal_spacing, cw) in;
-                
-                void main(void)
-                {
-                    gl_Position = (gl_TessCoord.x * gl_in[0].gl_Position +
-                                   gl_TessCoord.y * gl_in[1].gl_Position +
-                                   gl_TessCoord.z * gl_in[2].gl_Position);
-                }
-            ";
-
-            //Source code for tessellation control shader
-            string geomShaderSource = @"
-                #version 430 core
-
-                layout (triangles) in;
-                layout (points, max_vertices = 3) out;
-
-                void main(void)
-                {
-                    int i;
-                    for (i = 0; i < gl_in.length(); i++)
-                    {
-                        gl_Position = gl_in[i].gl_Position;
-                        EmitVertex();
-                    }
-                }
-            ";
-
             //Source code for fragment shader
             string fragmentShaderSource = @"
                 #version 430 core
                 
+                // Declare VS_OUT as an input interface block
+                in VS_OUT
+                {
+                    vec4 color; // Send color to the next stage
+                } fs_in;
+
                 //Output to the framebuffer
                 out vec4 color;
 
                 void main(void)
                 {
-                    color = vec4(0.0, 0.8, 1.0, 1.0);
+                    // Simply assign the color we were given by the vertex shader to our output
+                    color = fs_in.color;
                 }
                 ";
 
@@ -114,21 +82,6 @@ namespace SB6_CSharp
             vertexShaderHandle = GL.CreateShader(ShaderType.VertexShader);
             GL.ShaderSource( vertexShaderHandle, vertexShaderSource );
             GL.CompileShader( vertexShaderHandle );
-
-            //Create and compile tessellation control shader
-            tessCtrlShaderHandle = GL.CreateShader(ShaderType.TessControlShader);
-            GL.ShaderSource( tessCtrlShaderHandle, tessCtrlShaderSource );
-            GL.CompileShader( tessCtrlShaderHandle );
-
-            //Create and compile tessellation evaluation shader
-            tessEvalShaderHandle = GL.CreateShader(ShaderType.TessEvaluationShader);
-            GL.ShaderSource( tessEvalShaderHandle, tessEvalShaderSource );
-            GL.CompileShader( tessEvalShaderHandle );
-
-            //Create and compile geometry shader
-            geomShaderHandle = GL.CreateShader(ShaderType.GeometryShader);
-            GL.ShaderSource( geomShaderHandle, geomShaderSource );
-            GL.CompileShader( geomShaderHandle );
 
             //Create and compile fragment shader
             fragmentShaderHandle = GL.CreateShader(ShaderType.FragmentShader);
@@ -139,21 +92,12 @@ namespace SB6_CSharp
             shaderProgramHandle = GL.CreateProgram();
             GL.AttachShader( shaderProgramHandle, vertexShaderHandle );
             Console.WriteLine(GL.GetShaderInfoLog(vertexShaderHandle));
-            GL.AttachShader( shaderProgramHandle, tessCtrlShaderHandle );
-            Console.WriteLine(GL.GetShaderInfoLog(tessCtrlShaderHandle));
-            GL.AttachShader( shaderProgramHandle, tessEvalShaderHandle );
-            Console.WriteLine(GL.GetShaderInfoLog(tessEvalShaderHandle));
-            GL.AttachShader( shaderProgramHandle, geomShaderHandle );
-            Console.WriteLine(GL.GetShaderInfoLog(geomShaderHandle));
             GL.AttachShader( shaderProgramHandle, fragmentShaderHandle );
             Console.WriteLine(GL.GetShaderInfoLog(fragmentShaderHandle));
             GL.LinkProgram( shaderProgramHandle );
 
             //Delete the shaders as the program has them now
             GL.DeleteShader( vertexShaderHandle );
-            GL.DeleteShader( tessCtrlShaderHandle );
-            GL.DeleteShader( tessEvalShaderHandle );
-            GL.DeleteShader( geomShaderHandle );
             GL.DeleteShader( fragmentShaderHandle );
 
             return shaderProgramHandle;
@@ -181,23 +125,35 @@ namespace SB6_CSharp
         protected override void OnRenderFrame(FrameEventArgs e)
         {
             //Get elapsed time since application startup
-            double elapsedSeconds = Program.Counter.ElapsedMilliseconds / 1000.0;
+            double elapsedSeconds = Program.ElapsedTimeSeconds;
             
-            //Green background color
-            _color[0] = 0.0f;
-            _color[1] = 0.25f;
+            //Animate background color
+            _color[0] = (float) (Math.Sin(elapsedSeconds) * 0.5f + 0.5f);
+            _color[1] = (float) (Math.Cos(elapsedSeconds) * 0.5f + 0.5f);
 
+          
             //Clear the window with given color
             GL.ClearBuffer(ClearBuffer.Color, 0, _color);
  
             //Use the program object we created earlier for rendering
             GL.UseProgram(_renderingProgramHandle);
 
-            //Set point size to something we can actually see
-            GL.PointSize(5.0f);
+            //Animate triangle position
+            float[] vertexPos = new float[] { (float)(Math.Sin(elapsedSeconds) * 0.5f),
+                                            (float)(Math.Cos(elapsedSeconds) * 0.6f),
+                                            0.0f, 0.0f };
+            
+            //Animate triangle color
+            float[] vertexColor = new float[] { (float) (Math.Cos(elapsedSeconds) * 0.5f + 0.5f), 
+                                                (float) (Math.Sin(elapsedSeconds) * 0.5f + 0.5f), 
+                                                0.0f, 1.0f };
+            
+            //Update the value of input attributes
+            GL.VertexAttrib4(0, vertexPos);
+            GL.VertexAttrib4(1, vertexColor);
 
-            //Draw patches
-            GL.DrawArrays(PrimitiveType.Patches, 0, 3);
+            //Draw one triangle
+            GL.DrawArrays(PrimitiveType.Triangles, 0, 3);
             
             SwapBuffers();
         }

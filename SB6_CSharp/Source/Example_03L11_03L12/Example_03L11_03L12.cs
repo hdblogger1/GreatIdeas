@@ -16,7 +16,7 @@ namespace SB6_CSharp
 
         //-----------------------------------------------------------------------------------------
         public Example_03L11_03L12() 
-            : base( 640, 480, GraphicsMode.Default, "OpenTK Example", 0, DisplayDevice.Default
+            : base( 640, 480, GraphicsMode.Default, "OpenGL SuperBible - Simple Triangle", 0, DisplayDevice.Default
                     // ask for an OpenGL 4.3 or higher default(core?) context
                     , 4, 3, GraphicsContextFlags.Default)
         {

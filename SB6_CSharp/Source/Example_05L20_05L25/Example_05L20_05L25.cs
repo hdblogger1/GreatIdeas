@@ -7,9 +7,31 @@ using OpenTK.Graphics.OpenGL;
 
 namespace SB6_CSharp
 {
-    class Example_05L26 : GameWindow
+    class Example_05L20_05L25 : GameWindow
     {
         float[] _color = new float[] { 1.0f, 0.0f, 0.0f, 1.0f };
+
+        float[] _vertices = new float[] 
+        {
+            // back
+            -0.25f, 0.25f,-0.25f,   -0.25f,-0.25f,-0.25f,    0.25f,-0.25f,-0.25f,
+             0.25f,-0.25f,-0.25f,    0.25f, 0.25f,-0.25f,   -0.25f, 0.25f,-0.25f,
+            // right
+             0.25f,-0.25f,-0.25f,    0.25f,-0.25f, 0.25f,    0.25f, 0.25f,-0.25f,
+             0.25f,-0.25f, 0.25f,    0.25f, 0.25f, 0.25f,    0.25f, 0.25f,-0.25f,
+            // front
+             0.25f,-0.25f, 0.25f,   -0.25f,-0.25f, 0.25f,    0.25f, 0.25f, 0.25f,
+            -0.25f,-0.25f, 0.25f,   -0.25f, 0.25f, 0.25f,    0.25f, 0.25f, 0.25f,
+            // left
+            -0.25f,-0.25f, 0.25f,   -0.25f,-0.25f,-0.25f,   -0.25f, 0.25f, 0.25f,
+            -0.25f,-0.25f,-0.25f,   -0.25f, 0.25f,-0.25f,   -0.25f, 0.25f, 0.25f,
+            // bottom
+            -0.25f,-0.25f, 0.25f,    0.25f,-0.25f, 0.25f,    0.25f,-0.25f,-0.25f,
+             0.25f,-0.25f,-0.25f,   -0.25f,-0.25f,-0.25f,   -0.25f,-0.25f, 0.25f,
+            // top
+            -0.25f, 0.25f,-0.25f,    0.25f, 0.25f,-0.25f,    0.25f, 0.25f, 0.25f,
+             0.25f, 0.25f, 0.25f,   -0.25f, 0.25f, 0.25f,   -0.25f, 0.25f,-0.25f
+        };
 
         int _renderingProgramHandle;
         int _vaoHandle;
@@ -20,7 +42,7 @@ namespace SB6_CSharp
         Matrix4 _projMatrix;
 
         //-----------------------------------------------------------------------------------------
-        public Example_05L26() 
+        public Example_05L20_05L25() 
             : base( 800, 600, GraphicsMode.Default, "OpenTK Example", 0, DisplayDevice.Default
                     // ask for an OpenGL 4.3 or higher default(core?) context
                     , 4, 3, GraphicsContextFlags.Default)
@@ -100,6 +122,7 @@ namespace SB6_CSharp
         protected override void OnResize(EventArgs e)
         {
             base.OnResize(e);
+            GL.Viewport(ClientRectangle.X, ClientRectangle.Y, ClientRectangle.Width, ClientRectangle.Height);
             float aspect = (float)Width / (float)Height;
             _projMatrix = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(50.0f), aspect, 0.1f, 1000.0f);
         }
@@ -116,33 +139,11 @@ namespace SB6_CSharp
             _mvLocation = GL.GetUniformLocation( _renderingProgramHandle, "mv_matrix" );
             _projLocation = GL.GetUniformLocation( _renderingProgramHandle, "proj_matrix" );
 
-            float[] vertex_positions = new float[] 
-            {
-                // back
-                -0.25f, 0.25f,-0.25f,   -0.25f,-0.25f,-0.25f,    0.25f,-0.25f,-0.25f,
-                 0.25f,-0.25f,-0.25f,    0.25f, 0.25f,-0.25f,   -0.25f, 0.25f,-0.25f,
-                // right
-                 0.25f,-0.25f,-0.25f,    0.25f,-0.25f, 0.25f,    0.25f, 0.25f,-0.25f,
-                 0.25f,-0.25f, 0.25f,    0.25f, 0.25f, 0.25f,    0.25f, 0.25f,-0.25f,
-                // front
-                 0.25f,-0.25f, 0.25f,   -0.25f,-0.25f, 0.25f,    0.25f, 0.25f, 0.25f,
-                -0.25f,-0.25f, 0.25f,   -0.25f, 0.25f, 0.25f,    0.25f, 0.25f, 0.25f,
-                // left
-                -0.25f,-0.25f, 0.25f,   -0.25f,-0.25f,-0.25f,   -0.25f, 0.25f, 0.25f,
-                -0.25f,-0.25f,-0.25f,   -0.25f, 0.25f,-0.25f,   -0.25f, 0.25f, 0.25f,
-                // bottom
-                -0.25f,-0.25f, 0.25f,    0.25f,-0.25f, 0.25f,    0.25f,-0.25f,-0.25f,
-                 0.25f,-0.25f,-0.25f,   -0.25f,-0.25f,-0.25f,   -0.25f,-0.25f, 0.25f,
-                // top
-                -0.25f, 0.25f,-0.25f,    0.25f, 0.25f,-0.25f,    0.25f, 0.25f, 0.25f,
-                 0.25f, 0.25f, 0.25f,   -0.25f, 0.25f, 0.25f,   -0.25f, 0.25f,-0.25f
-            };
-           
             // Now generate some data and put it in a buffer object
             GL.GenBuffers(1, out _buffer);
             GL.BindBuffer(BufferTarget.ArrayBuffer, _buffer);
-            GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(vertex_positions.Length * sizeof(float)), 
-                          vertex_positions, BufferUsageHint.StaticDraw);
+            GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(_vertices.Length * sizeof(float)), 
+                          _vertices, BufferUsageHint.StaticDraw);
             
             // Set up our vertex attribute
             GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 0, 0 );
@@ -164,7 +165,7 @@ namespace SB6_CSharp
         protected override void OnRenderFrame(FrameEventArgs e)
         {
             // Get elapsed time since application startup
-            float elapsedSeconds = (float)(Program.Counter.ElapsedMilliseconds / 1000.0);
+            float elapsedSeconds = (float)(Program.ElapsedTimeSeconds);
 
             // Set color to green
             _color[0] = 0.0f;
@@ -173,34 +174,30 @@ namespace SB6_CSharp
             // Clear the window with given color
             GL.ClearBuffer(ClearBuffer.Color, 0, _color);
 
+            //float one = 1.0f;
+            //GL.ClearBuffer(ClearBuffer.Depth, 0, ref one);
+ 
             // Use the program object we created earlier for rendering
             GL.UseProgram(_renderingProgramHandle);
 
-            // Set the projection matrices
+            Matrix4 mvMatrix;
+            float f = elapsedSeconds * 0.3f;
+            mvMatrix = Matrix4.CreateFromAxisAngle(new Vector3(1.0f, 0.0f, 0.0f), 
+                                                   elapsedSeconds * MathHelper.DegreesToRadians(81.0f) );
+            mvMatrix *= Matrix4.CreateFromAxisAngle(new Vector3(0.0f, 1.0f, 0.0f), 
+                                                    elapsedSeconds * MathHelper.DegreesToRadians(45.0f) );
+            mvMatrix *= Matrix4.CreateTranslation( (float)(Math.Sin(2.1f * f) * 0.5f), 
+                                                   (float)(Math.Cos(1.7f * f) * 0.5f),
+                                                   (float)(Math.Sin(1.3f * f) * Math.Cos(1.5f * f) * 2.0f));
+            mvMatrix *= Matrix4.CreateTranslation( 0.0f, 0.0f, -4.0f );
+
+            // Set the model-view and projection matrices
+            GL.UniformMatrix4( _mvLocation, false, ref mvMatrix );
             GL.UniformMatrix4( _projLocation, false, ref _projMatrix );
 
-            Matrix4 mvMatrix;
-            float f;
+            // Draw 6 faces of 2 triangles of 3 vertices each = 36 vertices
+            GL.DrawArrays(PrimitiveType.Triangles, 0, 36);
             
-            for( int i=0; i<24; i++ )
-            {
-                // Calculate a new model-view matrix for each object
-                f = (float)i + (elapsedSeconds * 0.3f);
-                mvMatrix = Matrix4.CreateTranslation( (float)(Math.Sin(2.1f * f) * 2.0f), 
-                                                      (float)(Math.Cos(1.7f * f) * 2.0f),
-                                                      (float)(Math.Sin(1.3f * f) * Math.Cos(1.5f * f) * 2.0f));
-                mvMatrix *= Matrix4.CreateFromAxisAngle(new Vector3(1.0f, 0.0f, 0.0f), 
-                                                        elapsedSeconds * MathHelper.DegreesToRadians(21.0f) );
-                mvMatrix *= Matrix4.CreateFromAxisAngle(new Vector3(0.0f, 1.0f, 0.0f), 
-                                                        elapsedSeconds * MathHelper.DegreesToRadians(45.0f) );
-                mvMatrix *= Matrix4.CreateTranslation( 0.0f, 0.0f, -6.0f );
-
-                // Update the uniform
-                GL.UniformMatrix4( _mvLocation, false, ref mvMatrix );
-
-                // Draw - notice that we haven’t updated the projection matrix
-                GL.DrawArrays(PrimitiveType.Triangles, 0, 36);
-            }
             SwapBuffers();
         }
     }

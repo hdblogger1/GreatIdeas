@@ -1,6 +1,6 @@
 ﻿//With USE_SHARED_LAYOUT defined, the vertex shader will use a 'shared' uniform block. With it *NOT*
 //defined, the vertex shader will use a 'standard' (std140) uniform block.
-#define USE_SHARED_LAYOUT
+//#define USE_SHARED_LAYOUT
 
 //With USE_BOUNDED_LAYOUT defined, the vertex shader will use a 'standard' (std140) uniform block
 //which is bound to a fixed uniform block binding point. With it *NOT* defined, the vertex shader 
@@ -388,7 +388,7 @@ namespace SB6_CSharp
         protected override void OnRenderFrame(FrameEventArgs e)
         {
             // Get elapsed time since application startup
-            float elapsedSeconds = (float)(Program.Counter.ElapsedMilliseconds / 1000.0);
+            float elapsedSeconds = (float)(Program.ElapsedTimeSeconds);
 
             //Set color to green
             _color[0] = 0.0f;
