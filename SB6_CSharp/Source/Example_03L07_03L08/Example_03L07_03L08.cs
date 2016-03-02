@@ -7,30 +7,39 @@ using OpenTK.Graphics.OpenGL;
 
 namespace SB6_CSharp
 {
+    //=============================================================================================
+    /// <summary>
+    /// Our OpenTK GameWindow derived application class which takes care of creating a window, 
+    /// handling input, and displaying the rendered results to the user.
+    /// </summary>
     class Example_03L07_03L08 : GameWindow
     {
+        //-----------------------------------------------------------------------------------------
+        /// <summary>
+        /// The Statics container class holding class-wide static globals
+        /// </summary>
+        static class Statics
+        {
+            public static readonly float[] colorGreen = { 0.0f, 0.25f, 0.0f, 1.0f };
+        }
         
-        float[] _color = new float[] { 1.0f, 0.0f, 0.0f, 1.0f };
-
-        int _renderingProgramHandle;
-        int _vaoHandle;
+        private int _shaderProgramName;
+        private int _vertexArrayName;
 
         //-----------------------------------------------------------------------------------------
         public Example_03L07_03L08() 
-            : base( 640, 480, GraphicsMode.Default, "OpenGL SuperBible - Tessellated Triangle", 0, DisplayDevice.Default
-                    // ask for an OpenGL 4.3 or higher default(core?) context
-                    , 4, 3, GraphicsContextFlags.Default)
+            : base( 800, 600, GraphicsMode.Default, "OpenGL SuperBible - Tessellated Triangle", 
+                    0, DisplayDevice.Default, 4, 3, GraphicsContextFlags.Default)
         {
         }
 
         //-----------------------------------------------------------------------------------------
-        public int CompileShaders()
+        private bool _InitProgram()
         {
-            int vertexShaderHandle, fragmentShaderHandle;
-            int tessCtrlShaderHandle, tessEvalShaderHandle;
-            int shaderProgramHandle;
+            int vertexShaderName, fragmentShaderName;
+            int tessCtrlShaderName, tessEvalShaderName;
                 
-            //Source code for vertex shader
+            // Source code for vertex shader
             string vertexShaderSource = @"
                 #version 430 core
 
@@ -45,7 +54,7 @@ namespace SB6_CSharp
                 }
                 ";
 
-            //Source code for tessellation control shader
+            // Source code for tessellation control shader
             string tessCtrlShaderSource = @"
                 #version 430 core
                 
@@ -64,7 +73,7 @@ namespace SB6_CSharp
                 }
             ";
 
-            //Source code for tessellation control shader
+            // Source code for tessellation control shader
             string tessEvalShaderSource = @"
                 #version 430 core
                 
@@ -78,7 +87,7 @@ namespace SB6_CSharp
                 }
             ";
 
-            //Source code for fragment shader
+            // Source code for fragment shader
             string fragmentShaderSource = @"
                 #version 430 core
                 
@@ -91,86 +100,87 @@ namespace SB6_CSharp
                 }
                 ";
 
-            //Create and compile vertex shader
-            vertexShaderHandle = GL.CreateShader(ShaderType.VertexShader);
-            GL.ShaderSource( vertexShaderHandle, vertexShaderSource );
-            GL.CompileShader( vertexShaderHandle );
+            // Create and compile vertex shader
+            vertexShaderName = GL.CreateShader( ShaderType.VertexShader );
+            GL.ShaderSource( vertexShaderName, vertexShaderSource );
+            GL.CompileShader( vertexShaderName );
 
-            //Create and compile tessellation control shader
-            tessCtrlShaderHandle = GL.CreateShader(ShaderType.TessControlShader);
-            GL.ShaderSource( tessCtrlShaderHandle, tessCtrlShaderSource );
-            GL.CompileShader( tessCtrlShaderHandle );
+            // Create and compile tessellation control shader
+            tessCtrlShaderName = GL.CreateShader( ShaderType.TessControlShader );
+            GL.ShaderSource( tessCtrlShaderName, tessCtrlShaderSource );
+            GL.CompileShader( tessCtrlShaderName );
 
-            //Create and compile tessellation evaluation shader
-            tessEvalShaderHandle = GL.CreateShader(ShaderType.TessEvaluationShader);
-            GL.ShaderSource( tessEvalShaderHandle, tessEvalShaderSource );
-            GL.CompileShader( tessEvalShaderHandle );
+            // Create and compile tessellation evaluation shader
+            tessEvalShaderName = GL.CreateShader( ShaderType.TessEvaluationShader );
+            GL.ShaderSource( tessEvalShaderName, tessEvalShaderSource );
+            GL.CompileShader( tessEvalShaderName );
 
-            //Create and compile fragment shader
-            fragmentShaderHandle = GL.CreateShader(ShaderType.FragmentShader);
-            GL.ShaderSource( fragmentShaderHandle, fragmentShaderSource );
-            GL.CompileShader( fragmentShaderHandle );
+            // Create and compile fragment shader
+            fragmentShaderName = GL.CreateShader( ShaderType.FragmentShader );
+            GL.ShaderSource( fragmentShaderName, fragmentShaderSource );
+            GL.CompileShader( fragmentShaderName );
 
-            //Create program, attach shaders to it, and link it
-            shaderProgramHandle = GL.CreateProgram();
-            GL.AttachShader( shaderProgramHandle, vertexShaderHandle );
-            Console.WriteLine(GL.GetShaderInfoLog(vertexShaderHandle));
-            GL.AttachShader( shaderProgramHandle, tessCtrlShaderHandle );
-            Console.WriteLine(GL.GetShaderInfoLog(tessCtrlShaderHandle));
-            GL.AttachShader( shaderProgramHandle, tessEvalShaderHandle );
-            Console.WriteLine(GL.GetShaderInfoLog(tessEvalShaderHandle));
-            GL.AttachShader( shaderProgramHandle, fragmentShaderHandle );
-            Console.WriteLine(GL.GetShaderInfoLog(fragmentShaderHandle));
-            GL.LinkProgram( shaderProgramHandle );
+            // Create program, attach shaders to it, and link it
+            _shaderProgramName = GL.CreateProgram();
+            GL.AttachShader( _shaderProgramName, vertexShaderName );
+            Console.WriteLine( GL.GetShaderInfoLog( vertexShaderName ) );
+            GL.AttachShader( _shaderProgramName, tessCtrlShaderName );
+            Console.WriteLine( GL.GetShaderInfoLog( tessCtrlShaderName ) );
+            GL.AttachShader( _shaderProgramName, tessEvalShaderName );
+            Console.WriteLine( GL.GetShaderInfoLog( tessEvalShaderName ) );
+            GL.AttachShader( _shaderProgramName, fragmentShaderName );
+            Console.WriteLine( GL.GetShaderInfoLog( fragmentShaderName ) );
+            GL.LinkProgram( _shaderProgramName );
 
-            //Delete the shaders as the program has them now
-            GL.DeleteShader( vertexShaderHandle );
-            GL.DeleteShader( tessCtrlShaderHandle );
-            GL.DeleteShader( tessEvalShaderHandle );
-            GL.DeleteShader( fragmentShaderHandle );
+            // Delete the shaders as the program has them now
+            GL.DeleteShader( vertexShaderName );
+            GL.DeleteShader( tessCtrlShaderName );
+            GL.DeleteShader( tessEvalShaderName );
+            GL.DeleteShader( fragmentShaderName );
 
-            return shaderProgramHandle;
+            return true;
         }
         
         //-----------------------------------------------------------------------------------------
-        protected override void OnLoad (EventArgs e)
+        private bool _InitVertexArray()
         {
-            _renderingProgramHandle = CompileShaders();
-                
-            //Create VAO object to hold vertex shader inputs and attach it to our context
-            GL.GenVertexArrays(1, out _vaoHandle);
-            GL.BindVertexArray(_vaoHandle);
-        }
-
-        //-----------------------------------------------------------------------------------------
-        protected override void OnUnload(EventArgs e)
-        {
-            GL.DeleteVertexArrays(1, ref _vaoHandle);
-            GL.DeleteProgram(_renderingProgramHandle);
-        }
-        
-        //-----------------------------------------------------------------------------------------
-        //Our rendering function
-        protected override void OnRenderFrame(FrameEventArgs e)
-        {
-            //Get elapsed time since application startup
-            double elapsedSeconds = Program.ElapsedTimeSeconds;
+            // Create VAO object to hold vertex shader inputs and attach it to our context. As our
+            // shader dosn't have any inputs, nothing else needs to be done with them, but OpenGL
+            // still requires the VAO object to be created before drawing is allowed.
+            GL.GenVertexArrays( 1, out _vertexArrayName );
+            GL.BindVertexArray( _vertexArrayName );
             
-            //Set color to green
-            _color[0] = 0.0f;
-            _color[1] = 0.2f;
+            return true;
+        }
 
-            //Clear the window with given color
-            GL.ClearBuffer(ClearBuffer.Color, 0, _color);
+        //-----------------------------------------------------------------------------------------
+        protected override void OnLoad( EventArgs e )
+        {
+            this._InitProgram();
+            this._InitVertexArray();
+        }
+
+        //-----------------------------------------------------------------------------------------
+        protected override void OnUnload( EventArgs e )
+        {
+            GL.DeleteVertexArrays( 1, ref _vertexArrayName );
+            GL.DeleteProgram( _shaderProgramName );
+        }
+        
+        //-----------------------------------------------------------------------------------------
+        protected override void OnRenderFrame( FrameEventArgs e )
+        {
+            // Clear the window with given color
+            GL.ClearBuffer( ClearBuffer.Color, 0, Statics.colorGreen );
  
             //Use the program object we created earlier for rendering
-            GL.UseProgram(_renderingProgramHandle);
+            GL.UseProgram( _shaderProgramName );
 
             //Tell OpenGL to draw outlines only
-            GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Line );
+            GL.PolygonMode( MaterialFace.FrontAndBack, PolygonMode.Line );
 
             //Draw patches
-            GL.DrawArrays(PrimitiveType.Patches, 0, 3);
+            GL.DrawArrays( PrimitiveType.Patches, 0, 3 );
             
             SwapBuffers();
         }

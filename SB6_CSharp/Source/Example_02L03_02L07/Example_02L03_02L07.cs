@@ -24,7 +24,7 @@ namespace SB6_CSharp
         }
 
         // OpenGL object names attached to resources that require 'deleting'. (see OnUnload())
-        private int _programName;
+        private int _shaderProgramName;
         private int _vertexArrayName;
 
         //-----------------------------------------------------------------------------------------
@@ -59,20 +59,20 @@ namespace SB6_CSharp
                 ";
 
             // Create and compile vertex shader
-            vertexShaderName = GL.CreateShader(ShaderType.VertexShader);
+            vertexShaderName = GL.CreateShader( ShaderType.VertexShader );
             GL.ShaderSource( vertexShaderName, vertexShaderSource );
-            GL.CompileShader(vertexShaderName);
+            GL.CompileShader( vertexShaderName );
 
             // Create and compile fragment shader
-            fragmentShaderName = GL.CreateShader(ShaderType.FragmentShader);
+            fragmentShaderName = GL.CreateShader( ShaderType.FragmentShader );
             GL.ShaderSource( fragmentShaderName, fragmentShaderSource );
-            GL.CompileShader(fragmentShaderName);
+            GL.CompileShader( fragmentShaderName );
 
             // Create program, attach shaders to it, and link it
-            _programName = GL.CreateProgram();
-            GL.AttachShader( _programName, vertexShaderName );
-            GL.AttachShader( _programName, fragmentShaderName );
-            GL.LinkProgram(_programName);
+            _shaderProgramName = GL.CreateProgram();
+            GL.AttachShader( _shaderProgramName, vertexShaderName );
+            GL.AttachShader( _shaderProgramName, fragmentShaderName );
+            GL.LinkProgram( _shaderProgramName );
 
             // Delete the shaders as the program has them now
             GL.DeleteShader(vertexShaderName);
@@ -104,7 +104,7 @@ namespace SB6_CSharp
         protected override void OnUnload( EventArgs e )
         {
             GL.DeleteVertexArrays( 1, ref _vertexArrayName );
-            GL.DeleteProgram( _programName );
+            GL.DeleteProgram( _shaderProgramName );
         }
         
         //-----------------------------------------------------------------------------------------
@@ -113,7 +113,7 @@ namespace SB6_CSharp
             GL.ClearBuffer( ClearBuffer.Color, 0, Statics.colorRed );
  
             // Use the program object we created earlier for rendering
-            GL.UseProgram( _programName );
+            GL.UseProgram( _shaderProgramName );
 
             // The following sets the point size to at least 64 pixels
             GL.PointSize( 40.0f );

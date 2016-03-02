@@ -23,7 +23,7 @@ namespace SB6_CSharp
             public static readonly float[] colorGreen = { 0.0f, 0.2f, 0.0f, 1.0f };
         }
 
-        private int _programName;
+        private int _shaderProgramName;
         private int _vertexArrayName;
 
         //-----------------------------------------------------------------------------------------
@@ -78,12 +78,12 @@ namespace SB6_CSharp
             GL.CompileShader( fragmentShaderName );
 
             // Create program, attach shaders to it, and link it
-            _programName = GL.CreateProgram();
-            GL.AttachShader( _programName, vertexShaderName );
+            _shaderProgramName = GL.CreateProgram();
+            GL.AttachShader( _shaderProgramName, vertexShaderName );
             Console.WriteLine( GL.GetShaderInfoLog( vertexShaderName ) );
-            GL.AttachShader( _programName, fragmentShaderName );
+            GL.AttachShader( _shaderProgramName, fragmentShaderName );
             Console.WriteLine( GL.GetShaderInfoLog( fragmentShaderName ) );
-            GL.LinkProgram( _programName );
+            GL.LinkProgram( _shaderProgramName );
 
             // Delete the shaders as the program has them now
             GL.DeleteShader( vertexShaderName );
@@ -115,7 +115,7 @@ namespace SB6_CSharp
         protected override void OnUnload( EventArgs e )
         {
             GL.DeleteVertexArrays( 1, ref _vertexArrayName );
-            GL.DeleteProgram( _programName );
+            GL.DeleteProgram( _shaderProgramName );
         }
         
         //-----------------------------------------------------------------------------------------
@@ -128,7 +128,7 @@ namespace SB6_CSharp
             GL.ClearBuffer( ClearBuffer.Color, 0, Statics.colorGreen );
  
             //Use the program object we created earlier for rendering
-            GL.UseProgram( _programName );
+            GL.UseProgram( _shaderProgramName );
 
             float[] attrib = new float[4] { (float)(Math.Sin(elapsedSeconds) * 0.5f),
                                             (float)(Math.Cos(elapsedSeconds) * 0.6f),
