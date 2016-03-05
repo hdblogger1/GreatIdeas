@@ -90,11 +90,10 @@ namespace SB6_CSharp
         }
         
         //-----------------------------------------------------------------------------------------
-        private bool _InitVertexArray()
+        private bool _InitVao()
         {
-            // Create VAO object to hold vertex shader inputs and attach it to our context. As our
-            // shader dosn't have any inputs, nothing else needs to be done with them, but OpenGL
-            // still requires the VAO object to be created before drawing is allowed.
+            // Create VAO object to hold vertex shader inputs and attach it to our context. As 
+            // OpenGL requires the VAO object (whether or not it's used) we do this here.
             GL.GenVertexArrays( 1, out _vertexArrayName );
             GL.BindVertexArray( _vertexArrayName );
             
@@ -105,14 +104,14 @@ namespace SB6_CSharp
         protected override void OnLoad( EventArgs e )
         {
             this._InitProgram();
-            this._InitVertexArray();
+            this._InitVao();
         }
 
         //-----------------------------------------------------------------------------------------
         protected override void OnUnload( EventArgs e )
         {
-            GL.DeleteVertexArrays( 1, ref _vertexArrayName );
             GL.DeleteProgram( _shaderProgramName );
+            GL.DeleteVertexArrays( 1, ref _vertexArrayName );
         }
         
         //-----------------------------------------------------------------------------------------

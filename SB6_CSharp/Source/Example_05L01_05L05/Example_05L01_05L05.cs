@@ -7,30 +7,39 @@ using OpenTK.Graphics.OpenGL;
 
 namespace SB6_CSharp
 {
+    //=============================================================================================
+    /// <summary>
+    /// Our OpenTK GameWindow derived application class which takes care of creating a window, 
+    /// handling input, and displaying the rendered results to the user.
+    /// </summary>
     class Example_05L01_05L05 : GameWindow
     {
-        float[] _color = new float[] { 1.0f, 0.0f, 0.0f, 1.0f };
-
-        int _renderingProgramHandle;
-        int _vaoHandle;
-
-        int _buffer;
+        //-----------------------------------------------------------------------------------------
+        /// <summary>
+        /// The Statics container class holding class-wide static globals
+        /// </summary>
+        static class Statics
+        {
+            public static readonly float[] colorGreen = { 0.0f, 0.25f, 0.0f, 1.0f };
+        }
+        
+        private int _shaderProgramName;
+        private int _vertexArrayName;
+        private int _arrayBufferName;
 
         //-----------------------------------------------------------------------------------------
         public Example_05L01_05L05() 
-            : base( 640, 480, GraphicsMode.Default, "OpenTK Example", 0, DisplayDevice.Default
-                    // ask for an OpenGL 4.3 or higher default(core?) context
-                    , 4, 3, GraphicsContextFlags.Default)
+            : base( 800, 600, GraphicsMode.Default, "OpenGL SuperBible - Listing 5.1 thru 5.5", 
+                    0, DisplayDevice.Default, 4, 3, GraphicsContextFlags.Default )
         {
         }
 
         //-----------------------------------------------------------------------------------------
-        public int CompileShaders()
+        private bool _InitProgram()
         {
-            int vertexShaderHandle, fragmentShaderHandle;
-            int shaderProgramHandle;
+            int vertexShaderName, fragmentShaderName;
                 
-            //Source code for vertex shader
+            // Source code for vertex shader
             string vertexShaderSource = @"
                 #version 430 core
 
@@ -42,7 +51,7 @@ namespace SB6_CSharp
                 }
                 ";
                 
-            //Source code for fragment shader
+            // Source code for fragment shader
             string fragmentShaderSource = @"
                 #version 430 core
                 out vec4 color;
@@ -53,50 +62,45 @@ namespace SB6_CSharp
                 }
                 ";
 
-            //Create and compile vertex shader
-            vertexShaderHandle = GL.CreateShader(ShaderType.VertexShader);
-            GL.ShaderSource( vertexShaderHandle, vertexShaderSource );
-            GL.CompileShader( vertexShaderHandle );
+            // Create and compile vertex shader
+            vertexShaderName = GL.CreateShader( ShaderType.VertexShader );
+            GL.ShaderSource( vertexShaderName, vertexShaderSource );
+            GL.CompileShader( vertexShaderName );
 
-            //Create and compile fragment shader
-            fragmentShaderHandle = GL.CreateShader(ShaderType.FragmentShader);
-            GL.ShaderSource( fragmentShaderHandle, fragmentShaderSource );
-            GL.CompileShader( fragmentShaderHandle );
+            // Create and compile fragment shader
+            fragmentShaderName = GL.CreateShader( ShaderType.FragmentShader );
+            GL.ShaderSource( fragmentShaderName, fragmentShaderSource );
+            GL.CompileShader( fragmentShaderName );
 
-            //Create program, attach shaders to it, and link it
-            shaderProgramHandle = GL.CreateProgram();
-            GL.AttachShader( shaderProgramHandle, vertexShaderHandle );
-            Console.WriteLine(GL.GetShaderInfoLog(vertexShaderHandle));
-            GL.AttachShader( shaderProgramHandle, fragmentShaderHandle );
-            Console.WriteLine(GL.GetShaderInfoLog(fragmentShaderHandle));
-            GL.LinkProgram( shaderProgramHandle );
+            // Create program, attach shaders to it, and link it
+            _shaderProgramName = GL.CreateProgram();
+            GL.AttachShader( _shaderProgramName, vertexShaderName );
+            Console.WriteLine( GL.GetShaderInfoLog( vertexShaderName ) );
+            GL.AttachShader( _shaderProgramName, fragmentShaderName );
+            Console.WriteLine( GL.GetShaderInfoLog( fragmentShaderName ) );
+            GL.LinkProgram( _shaderProgramName );
 
-            //Delete the shaders as the program has them now
-            GL.DeleteShader( vertexShaderHandle );
-            GL.DeleteShader( fragmentShaderHandle );
+            // Delete the shaders as the program has them now
+            GL.DeleteShader( vertexShaderName );
+            GL.DeleteShader( fragmentShaderName );
 
-            return shaderProgramHandle;
+            return true;
         }
         
         //-----------------------------------------------------------------------------------------
-        protected override void OnLoad (EventArgs e)
+        private bool _InitBuffers()
         {
-            _renderingProgramHandle = CompileShaders();
-                
-            //Create VAO object to hold vertex shader inputs and attach it to our context
-            GL.GenVertexArrays(1, out _vaoHandle);
-            GL.BindVertexArray(_vaoHandle);
+            // Generate a name for the buffer
+            GL.GenBuffers( 1, out _arrayBufferName );
 
-            //Generate a name for the buffer
-            GL.GenBuffers(1, out _buffer);
+            // Now bind it to the context using the GL_ARRAY_BUFFER binding point
+            GL.BindBuffer( BufferTarget.ArrayBuffer, _arrayBufferName );
 
-            //Now bind it to the context using the GL_ARRAY_BUFFER binding point
-            GL.BindBuffer(BufferTarget.ArrayBuffer, _buffer);
+            // Specify the amount of storage we want to use for the buffer
+            GL.BufferData( BufferTarget.ArrayBuffer, (IntPtr)(1024 * 1024), 
+                           IntPtr.Zero, BufferUsageHint.StaticDraw );
 
-            //Specify the amount of storage we want to use for the buffer
-            GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(1024 * 1024), IntPtr.Zero, BufferUsageHint.StaticDraw);
-
-            //This is the data that we will place into the buffer object
+            // This is the data that we will place into the buffer object
             float[] data = new float[] { 0.25f, -0.25f, 0.5f, 1.0f,
                                         -0.25f, -0.25f, 0.5f, 1.0f,
                                          0.25f,  0.25f, 0.5f, 1.0f };
@@ -105,17 +109,17 @@ namespace SB6_CSharp
             bool useAlternateCode = true;
             if( useAlternateCode )
             {
-                //LISTING 5.2
-                //Put the data into the buffer at offset zero
-                GL.BufferSubData(BufferTarget.ArrayBuffer, IntPtr.Zero, (IntPtr)(data.Length * sizeof(float)), data );
+                // LISTING 5.2
+                // Put the data into the buffer at offset zero
+                GL.BufferSubData( BufferTarget.ArrayBuffer, IntPtr.Zero, (IntPtr)(data.Length * sizeof(float)), data );
             }
             else
             {
-                //LISTING 5.3
-                //Get a pointer to the buffer’s data store
-                IntPtr ptr = GL.MapBuffer(BufferTarget.ArrayBuffer, BufferAccess.WriteOnly );
+                // LISTING 5.3
+                // Get a pointer to the buffer’s data store
+                IntPtr ptr = GL.MapBuffer( BufferTarget.ArrayBuffer, BufferAccess.WriteOnly );
 
-                //Copy our data into it...
+                // Copy our data into it...
                 unsafe
                 {
                     fixed ( float* src = &data[0] )
@@ -125,39 +129,73 @@ namespace SB6_CSharp
                     }
                 }
                 
-                //Tell OpenGL that we’re done with the pointer
-                GL.UnmapBuffer(BufferTarget.ArrayBuffer);
+                // Tell OpenGL that we’re done with the pointer
+                GL.UnmapBuffer( BufferTarget.ArrayBuffer );
             }
 
-            //Now, describe the data to OpenGL, tell it where it is, and turn on automatic vertex 
-            // fetching for the specified attribute
-            GL.VertexAttribPointer(0, 4, VertexAttribPointerType.Float, false, 0, 0 );
-            GL.EnableVertexAttribArray(0);
+            // Unbind the array buffer from the context
+            GL.BindBuffer( BufferTarget.ArrayBuffer, 0 );
+
+            return true;
         }
 
         //-----------------------------------------------------------------------------------------
-        protected override void OnUnload(EventArgs e)
+        private bool _InitVao()
         {
-            GL.DeleteVertexArrays(1, ref _vaoHandle);
-            GL.DeleteProgram(_renderingProgramHandle);
+            // Create VAO object to hold vertex shader inputs and attach it to our context. As our
+            // shader dosn't have any inputs, nothing else needs to be done with them, but OpenGL
+            // still requires the VAO object to be created before drawing is allowed.
+            GL.GenVertexArrays( 1, out _vertexArrayName );
+            GL.BindVertexArray( _vertexArrayName );
+
+            // Bind our array buffer that we created earlier to the context using the 
+            // GL_ARRAY_BUFFER binding point
+            GL.BindBuffer( BufferTarget.ArrayBuffer, _arrayBufferName );
+            
+            // Now, describe the data to OpenGL, tell it where it is, and turn on automatic vertex 
+            // fetching for the specified attribute. Note: This can't be done untill after the 
+            // call to GL.BindVertexArray() above.
+            GL.VertexAttribPointer( 0, 4, VertexAttribPointerType.Float, false, 0, 0 );
+
+            // Unbind the array buffer from the context
+            GL.BindBuffer( BufferTarget.ArrayBuffer, 0 );
+
+            // Enable the vertex attribute. Note we don't have to be bound to do this!
+            GL.EnableVertexAttribArray( 0 );
+
+            return true;
+        }
+
+        //-----------------------------------------------------------------------------------------
+        protected override void OnLoad( EventArgs e )
+        {
+            this._InitProgram();
+            this._InitBuffers();             /* note: this has to come before _InitVao() */
+            this._InitVao();
+        }
+
+        //-----------------------------------------------------------------------------------------
+        protected override void OnUnload( EventArgs e )
+        {
+            GL.DeleteProgram( _shaderProgramName );
+
+            // Make sure we release the buffer once were done with it.
+            GL.DeleteBuffers( 1, ref _arrayBufferName );
+            
+            GL.DeleteVertexArrays( 1, ref _vertexArrayName );
         }
         
         //-----------------------------------------------------------------------------------------
-        //Our rendering function
-        protected override void OnRenderFrame(FrameEventArgs e)
+        protected override void OnRenderFrame( FrameEventArgs e )
         {
-            //Set color to green
-            _color[0] = 0.0f;
-            _color[1] = 0.2f;
-            
-            //Clear the window with given color
-            GL.ClearBuffer(ClearBuffer.Color, 0, _color);
+            // Clear the window with given color
+            GL.ClearBuffer( ClearBuffer.Color, 0, Statics.colorGreen );
  
-            //Use the program object we created earlier for rendering
-            GL.UseProgram(_renderingProgramHandle);
+            // Use the program object we created earlier for rendering
+            GL.UseProgram( _shaderProgramName );
 
-            //Draw one triangle
-            GL.DrawArrays(PrimitiveType.Triangles, 0, 3);
+            // Draw one triangle
+            GL.DrawArrays( PrimitiveType.Triangles, 0, 3 );
             
             SwapBuffers();
         }

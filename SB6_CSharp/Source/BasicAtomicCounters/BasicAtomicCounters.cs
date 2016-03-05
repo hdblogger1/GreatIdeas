@@ -9,8 +9,26 @@ using System.Runtime.InteropServices;
 
 namespace SB6_CSharp
 {
+    //=============================================================================================
+    /// <summary>
+    /// Our OpenTK GameWindow derived application class which takes care of creating a window, 
+    /// handling input, and displaying the rendered results to the user.
+    /// </summary>
     class BasicAtomicCounters : GameWindow
     {
+        //-----------------------------------------------------------------------------------------
+        /// <summary>
+        /// The Statics container class holding class-wide static globals
+        /// </summary>
+        static class Statics
+        {
+            public static readonly float[] colorBlack = { 0.0f, 0.0f, 0.0f, 1.0f };
+        }
+        
+        //-----------------------------------------------------------------------------------------
+        /// <summary>
+        /// A management class for OpenGL buffer object names
+        /// </summary>
         static class Buffers
         {
             public enum Type { VERTEX, ATOMIC_COUNTER, NUM_BUFFERS };
@@ -20,59 +38,27 @@ namespace SB6_CSharp
             public static uint[] Names = new uint[(int)Type.NUM_BUFFERS];
         }
 
-        //float[] _vectorData = new float[] { 0.25f, -0.25f, 0.5f, 1.0f,
-        //                                   -0.25f, -0.25f, 0.5f, 1.0f,
-        //                                    0.25f,  0.25f, 0.5f, 1.0f,
-        //                                   -0.25f,  0.25f, 0.5f, 1.0f };
+        private int _shaderProgramName;
+        private int _vertexArrayName;
+
         Matrix4 _vectorData = new Matrix4( 0.25f, -0.25f, 0.5f, 1.0f,
                                            -0.25f, -0.25f, 0.5f, 1.0f,
                                             0.25f,  0.25f, 0.5f, 1.0f,
                                            -0.25f,  0.25f, 0.5f, 1.0f );
 
-        int _programName;
-        int _vertexArrayName;
-
         //-----------------------------------------------------------------------------------------
         public BasicAtomicCounters() 
-            : base( 800, 600, GraphicsMode.Default, "OpenTK Example", 0, DisplayDevice.Default
-                    // ask for an OpenGL 4.3 or higher default(core?) context
-                    , 4, 3, GraphicsContextFlags.Default)
+            : base( 800, 600, GraphicsMode.Default, "SB6_CSharp - Atomic Counters (Basic)", 
+                    0, DisplayDevice.Default, 4, 3, GraphicsContextFlags.Default )
         {
         }
 
         //-----------------------------------------------------------------------------------------
-        private bool InitBuffers()
-        {
-            GL.GenBuffers( Buffers.Count(), Buffers.Names );
-            
-            GL.BindBuffer(BufferTarget.ArrayBuffer, Buffers.Name(Buffers.Type.VERTEX));
-            //GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(sizeof(float) * 4 * _vectorData.Length), 
-            //              _vectorData, BufferUsageHint.StaticDraw);
-            //GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(sizeof(float) * 16), 
-            //              ref _vectorData, BufferUsageHint.StaticDraw);
-            GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(sizeof(float) * 16), 
-                          IntPtr.Zero, BufferUsageHint.StaticDraw);
-            GL.BufferSubData( BufferTarget.ArrayBuffer, IntPtr.Zero, (IntPtr)(sizeof(float) * 16), ref _vectorData );
-            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
-
-            uint data = 0;
-            GL.BindBuffer(BufferTarget.AtomicCounterBuffer, Buffers.Name(Buffers.Type.ATOMIC_COUNTER));
-            //GL.BufferData(BufferTarget.AtomicCounterBuffer, (IntPtr)sizeof(uint), 
-            //              IntPtr.Zero, BufferUsageHint.DynamicCopy);
-            GL.BufferData(BufferTarget.AtomicCounterBuffer, (IntPtr)sizeof(uint), 
-                          ref data, BufferUsageHint.DynamicCopy);
-            //GL.BufferSubData( BufferTarget.AtomicCounterBuffer, IntPtr.Zero, (IntPtr)sizeof(uint), ref data );
-            GL.BindBuffer(BufferTarget.AtomicCounterBuffer, 0);
-
-            return true;
-        }
-        
-        //-----------------------------------------------------------------------------------------
-        public bool InitProgram()
+        private bool _InitProgram()
         {
             int vertexShaderName, fragmentShaderName;
                 
-            //Source code for vertex shader
+            // Source code for vertex shader
             string vertexShaderSource = @"
                 #version 430 core
 
@@ -86,7 +72,6 @@ namespace SB6_CSharp
                 {
                     gl_Position = position;
                     uint cntr = atomicCounterIncrement( atomic_cntr );
-                    //switch( gl_VertexID )
                     switch( cntr )
                     {
                         case 0:  vs_color = vec4(0.0, 0.8, 1.0, 1.0);  break;
@@ -97,60 +82,68 @@ namespace SB6_CSharp
                 }
                 ";
                 
-            //Source code for fragment shader
+            // Source code for fragment shader
             string fragmentShaderSource = @"
                 #version 430 core
 
-                //layout(binding = 1, offset = 0) uniform atomic_uint atomic_cntr;
-
                 out vec4 color;
-
                 in vec4 vs_color;
 
                 void main(void)
                 {
-                    //atomicCounterIncrement( atomic_cntr );
-                    //uint cntr = atomicCounterIncrement( atomic_cntr );
                     color = vs_color;
-                    //switch( cntr )
-                    //{
-                    //    case 0:  color = vec4(0.0, 0.8, 1.0, 1.0);  break;
-                    //    case 1:  color = vec4(1.0, 0.0, 0.8, 1.0);  break;
-                    //    case 2:  color = vec4(0.8, 1.0, 0.0, 1.0);  break;
-                    //    case 3:  color = vec4(1.0, 0.8, 0.0, 1.0);  break;
-                    //    default: color = vec4(0.5, 0.5, 0.5, 1.0);  break;
-                    //}
                 }
                 ";
 
-            //Create and compile vertex shader
-            vertexShaderName = GL.CreateShader(ShaderType.VertexShader);
+            // Create and compile vertex shader
+            vertexShaderName = GL.CreateShader( ShaderType.VertexShader );
             GL.ShaderSource( vertexShaderName, vertexShaderSource );
             GL.CompileShader( vertexShaderName );
 
-            //Create and compile fragment shader
-            fragmentShaderName = GL.CreateShader(ShaderType.FragmentShader);
+            // Create and compile fragment shader
+            fragmentShaderName = GL.CreateShader( ShaderType.FragmentShader );
             GL.ShaderSource( fragmentShaderName, fragmentShaderSource );
             GL.CompileShader( fragmentShaderName );
 
-            //Create program, attach shaders to it, and link it
-            _programName = GL.CreateProgram();
-            GL.AttachShader( _programName, vertexShaderName );
-            Console.WriteLine(GL.GetShaderInfoLog(vertexShaderName));
-            GL.AttachShader( _programName, fragmentShaderName );
-            Console.WriteLine(GL.GetShaderInfoLog(fragmentShaderName));
-            GL.LinkProgram( _programName );
+            // Create program, attach shaders to it, and link it
+            _shaderProgramName = GL.CreateProgram();
+            GL.AttachShader( _shaderProgramName, vertexShaderName );
+            Console.WriteLine( GL.GetShaderInfoLog( vertexShaderName ) );
+            GL.AttachShader( _shaderProgramName, fragmentShaderName );
+            Console.WriteLine( GL.GetShaderInfoLog( fragmentShaderName ) );
+            GL.LinkProgram( _shaderProgramName );
 
-            //Delete the shaders as the program has them now
+            // Delete the shaders as the program has them now
             GL.DeleteShader( vertexShaderName );
             GL.DeleteShader( fragmentShaderName );
 
             return true;
         }
+ 
+        //-----------------------------------------------------------------------------------------
+        private bool _InitBuffers()
+        {
+            GL.GenBuffers( Buffers.Count(), Buffers.Names );
+            
+            GL.BindBuffer( BufferTarget.ArrayBuffer, Buffers.Name( Buffers.Type.VERTEX ) );
+            GL.BufferData( BufferTarget.ArrayBuffer, (IntPtr)(sizeof(float) * 16), 
+                           ref _vectorData, BufferUsageHint.StaticDraw );
+            GL.BindBuffer( BufferTarget.ArrayBuffer, 0 );
+
+            GL.BindBuffer( BufferTarget.AtomicCounterBuffer, Buffers.Name( Buffers.Type.ATOMIC_COUNTER ) );
+            GL.BufferData( BufferTarget.AtomicCounterBuffer, (IntPtr)sizeof(uint), 
+                           IntPtr.Zero, BufferUsageHint.DynamicCopy );
+            GL.BindBuffer( BufferTarget.AtomicCounterBuffer, 0 );
+
+            return true;
+        }
         
         //-----------------------------------------------------------------------------------------
-        private bool InitVertexArray()
+        private bool _InitVao()
         {
+            // Create VAO object to hold vertex shader inputs and attach it to our context. As our
+            // shader dosn't have any inputs, nothing else needs to be done with them, but OpenGL
+            // still requires the VAO object to be created before drawing is allowed.
             GL.GenVertexArrays( 1, out _vertexArrayName );
             GL.BindVertexArray( _vertexArrayName );
             
@@ -158,60 +151,46 @@ namespace SB6_CSharp
             GL.VertexAttribPointer(0, 4, VertexAttribPointerType.Float, false, 0, 0 );
             GL.BindBuffer( BufferTarget.ArrayBuffer, 0 );
 
-            GL.EnableVertexAttribArray(0);
+            GL.EnableVertexAttribArray( 0 );
 
             return true;
         }
 
         //-----------------------------------------------------------------------------------------
-        protected override void OnLoad (EventArgs e)
+        protected override void OnLoad( EventArgs e )
         {
-            bool success = true;
-
-            success = this.InitBuffers();
-            success = this.InitProgram();
-            success = this.InitVertexArray();
+            this._InitProgram();
+            this._InitBuffers();             /* note: this has to come before _InitVao() */
+            this._InitVao();
         }
 
         //-----------------------------------------------------------------------------------------
-        protected override void OnUnload(EventArgs e)
+        protected override void OnUnload( EventArgs e )
         {
+            GL.DeleteProgram( _shaderProgramName );
             GL.DeleteBuffers( Buffers.Count(), Buffers.Names );
-            GL.DeleteProgram( _programName );
-            GL.DeleteVertexArrays(1, ref _vertexArrayName);
+            GL.DeleteVertexArrays( 1, ref _vertexArrayName );
         }
         
         //-----------------------------------------------------------------------------------------
-        //Our rendering function
-        protected override void OnRenderFrame(FrameEventArgs e)
+        protected override void OnRenderFrame( FrameEventArgs e )
         {
             
-            //Clear the window with given color
-            GL.ClearBuffer(ClearBuffer.Color, 0, new float[] { 0.0f, 0.0f, 0.0f, 1.0f });
+            // Clear the window with given color
+            GL.ClearBuffer( ClearBuffer.Color, 0, Statics.colorBlack );
 
             uint data = 0;
             GL.BindBuffer( BufferTarget.AtomicCounterBuffer, Buffers.Name( Buffers.Type.ATOMIC_COUNTER ) );
-            GL.ClearBufferSubData( BufferTarget.AtomicCounterBuffer, PixelInternalFormat.R8ui, IntPtr.Zero, (IntPtr)sizeof(uint),
-                 PixelFormat.Rgba, All.UnsignedInt, (IntPtr)data );
-            //GL.BufferSubData( BufferTarget.AtomicCounterBuffer, IntPtr.Zero, (IntPtr)sizeof(uint), ref data );
+            GL.BufferSubData( BufferTarget.AtomicCounterBuffer, IntPtr.Zero, (IntPtr)sizeof(uint), ref data );
  
-            //IntPtr ptr = GL.MapBuffer(BufferTarget.AtomicCounterBuffer,BufferAccess.ReadOnly);
-            int[] managedArray = new int[100];
-            //Marshal.Copy(ptr,(int[])managedArray,0,1);
-            //GL.UnmapBuffer(BufferTarget.AtomicCounterBuffer);
-
-            //Use the program object we created earlier for rendering
-            GL.UseProgram(_programName);
+            // Use the program object we created earlier for rendering
+            GL.UseProgram( _shaderProgramName );
             GL.BindBufferBase( BufferRangeTarget.AtomicCounterBuffer, 1, Buffers.Name( Buffers.Type.ATOMIC_COUNTER ) );
 
-            GL.PointSize(40.0f);
+            GL.PointSize( 40.0f );
 
-            //Draw one triangle
-            GL.DrawArrays(PrimitiveType.Points, 0, 4);
-
-            IntPtr ptr = GL.MapBuffer(BufferTarget.AtomicCounterBuffer,BufferAccess.ReadOnly);
-            Marshal.Copy(ptr,(int[])managedArray,0,1);
-            GL.UnmapBuffer(BufferTarget.AtomicCounterBuffer);
+            // Draw one triangle
+            GL.DrawArrays( PrimitiveType.Points, 0, 4 );
             
             SwapBuffers();
         }

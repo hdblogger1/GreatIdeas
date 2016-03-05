@@ -184,6 +184,7 @@ namespace SB6_CSharp
             GL.VertexAttribPointer( 0, 3, VertexAttribPointerType.Float, false, 0, 0 );
             GL.BindBuffer( BufferTarget.ArrayBuffer, 0 );
 
+            // Enable the vertex attribute. Note we don't have to be bound to do this!
             GL.EnableVertexAttribArray( 0 );
 
             return true;
@@ -211,8 +212,8 @@ namespace SB6_CSharp
         {
             bool success = true;
 
-            success = this.InitBuffers();
             success = this.InitProgram();
+            success = this.InitBuffers();             /* note: this has to come before _InitVertexArray() */
             success = this.InitVertexArray();
             success = this.InitUniforms();
 

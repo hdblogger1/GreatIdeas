@@ -170,7 +170,7 @@ namespace SB6_CSharp
         }
         
         //-----------------------------------------------------------------------------------------
-        private bool _InitVertexArray()
+        private bool _InitVao()
         {
             // Create VAO object to hold vertex shader inputs and attach it to our context. As our
             // shader dosn't have any inputs, nothing else needs to be done with them, but OpenGL
@@ -185,7 +185,7 @@ namespace SB6_CSharp
         protected override void OnLoad( EventArgs e )
         {
             this._InitProgram();
-            this._InitVertexArray();
+            this._InitVao();
         }
 
         //-----------------------------------------------------------------------------------------
