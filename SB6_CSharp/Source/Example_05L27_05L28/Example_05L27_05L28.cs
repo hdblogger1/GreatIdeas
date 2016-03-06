@@ -9,54 +9,43 @@ using System.Runtime.InteropServices;
 
 namespace SB6_CSharp
 {
+    //=============================================================================================
+    /// <summary>
+    /// Our OpenTK GameWindow derived application class which takes care of creating a window, 
+    /// handling input, and displaying the rendered results to the user.
+    /// </summary>
     class Example_05L27_05L28 : GameWindow
     {
-        float[] _color = new float[] { 1.0f, 0.0f, 0.0f, 1.0f };
+        //-----------------------------------------------------------------------------------------
+        /// <summary>
+        /// The Statics container class holding class-wide static globals
+        /// </summary>
+        static class Statics
+        {
+            public static readonly float[] colorGreen = { 0.0f, 0.25f, 0.0f, 1.0f };
+        }
 
-        int _renderingProgramHandle;
-        int _vaoHandle;
+        private int _shaderProgramName;
+        private int _vertexArrayName;
+
+        private int _shaderStorageBufferName;
+        private int _uniformLocation;
 
         Matrix4 _projMatrix;
 
-        int _transformHandle;
-
-        float[] _vertices = new float[] 
-        {
-            // back
-            -0.25f, 0.25f,-0.25f,1,   -0.25f,-0.25f,-0.25f,1,    0.25f,-0.25f,-0.25f,1,
-             0.25f,-0.25f,-0.25f,1,    0.25f, 0.25f,-0.25f,1,   -0.25f, 0.25f,-0.25f,1,
-            // right
-             0.25f,-0.25f,-0.25f,1,    0.25f,-0.25f, 0.25f,1,    0.25f, 0.25f,-0.25f,1,
-             0.25f,-0.25f, 0.25f,1,    0.25f, 0.25f, 0.25f,1,    0.25f, 0.25f,-0.25f,1,
-            // front
-             0.25f,-0.25f, 0.25f,1,   -0.25f,-0.25f, 0.25f,1,    0.25f, 0.25f, 0.25f,1,
-            -0.25f,-0.25f, 0.25f,1,   -0.25f, 0.25f, 0.25f,1,    0.25f, 0.25f, 0.25f,1,
-            // left
-            -0.25f,-0.25f, 0.25f,1,   -0.25f,-0.25f,-0.25f,1,   -0.25f, 0.25f, 0.25f,1,
-            -0.25f,-0.25f,-0.25f,1,   -0.25f, 0.25f,-0.25f,1,   -0.25f, 0.25f, 0.25f,1,
-            // bottom
-            -0.25f,-0.25f, 0.25f,1,    0.25f,-0.25f, 0.25f,1,    0.25f,-0.25f,-0.25f,1,
-             0.25f,-0.25f,-0.25f,1,   -0.25f,-0.25f,-0.25f,1,   -0.25f,-0.25f, 0.25f,1,
-            // top
-            -0.25f, 0.25f,-0.25f,1,    0.25f, 0.25f,-0.25f,1,    0.25f, 0.25f, 0.25f,1,
-             0.25f, 0.25f, 0.25f,1,   -0.25f, 0.25f, 0.25f,1,   -0.25f, 0.25f,-0.25f,1
-        };
-
         //-----------------------------------------------------------------------------------------
         public Example_05L27_05L28() 
-            : base( 800, 600, GraphicsMode.Default, "OpenTK Example", 0, DisplayDevice.Default
-                    // ask for an OpenGL 4.3 or higher default(core?) context
-                    , 4, 3, GraphicsContextFlags.Default)
+            : base( 800, 600, GraphicsMode.Default, "OpenGL SuperBible - Listing 5.27 thru 5.28", 
+                    0, DisplayDevice.Default, 4, 3, GraphicsContextFlags.Default )
         {
         }
 
         //-----------------------------------------------------------------------------------------
-        public int CompileShaders()
+        private bool _InitProgram()
         {
-            int vertexShaderHandle, fragmentShaderHandle;
-            int shaderProgramHandle;
+            int vertexShaderName, fragmentShaderName;
                 
-            //Source code for vertex shader
+            // Source code for vertex shader
             string vertexShaderSource = @"
                 #version 430 core
 
@@ -85,7 +74,7 @@ namespace SB6_CSharp
                 }
                 ";
                 
-            //Source code for fragment shader
+            // Source code for fragment shader
             string fragmentShaderSource = @"
                 #version 430 core
 
@@ -102,149 +91,171 @@ namespace SB6_CSharp
                 }
                 ";
 
-            //Create and compile vertex shader
-            vertexShaderHandle = GL.CreateShader(ShaderType.VertexShader);
-            GL.ShaderSource( vertexShaderHandle, vertexShaderSource );
-            GL.CompileShader( vertexShaderHandle );
+            // Create and compile vertex shader
+            vertexShaderName = GL.CreateShader( ShaderType.VertexShader );
+            GL.ShaderSource( vertexShaderName, vertexShaderSource );
+            GL.CompileShader( vertexShaderName );
 
-            //Create and compile fragment shader
-            fragmentShaderHandle = GL.CreateShader(ShaderType.FragmentShader);
-            GL.ShaderSource( fragmentShaderHandle, fragmentShaderSource );
-            GL.CompileShader( fragmentShaderHandle );
+            // Create and compile fragment shader
+            fragmentShaderName = GL.CreateShader( ShaderType.FragmentShader );
+            GL.ShaderSource( fragmentShaderName, fragmentShaderSource );
+            GL.CompileShader( fragmentShaderName );
 
-            //Create program, attach shaders to it, and link it
-            shaderProgramHandle = GL.CreateProgram();
-            GL.AttachShader( shaderProgramHandle, vertexShaderHandle );
-            Console.WriteLine(GL.GetShaderInfoLog(vertexShaderHandle));
-            GL.AttachShader( shaderProgramHandle, fragmentShaderHandle );
-            Console.WriteLine(GL.GetShaderInfoLog(fragmentShaderHandle));
-            GL.LinkProgram( shaderProgramHandle );
+            // Create program, attach shaders to it, and link it
+            _shaderProgramName = GL.CreateProgram();
+            GL.AttachShader( _shaderProgramName, vertexShaderName );
+            Console.WriteLine( GL.GetShaderInfoLog( vertexShaderName ) );
+            GL.AttachShader( _shaderProgramName, fragmentShaderName );
+            Console.WriteLine( GL.GetShaderInfoLog( fragmentShaderName ) );
+            GL.LinkProgram( _shaderProgramName );
 
-            //Delete the shaders as the program has them now
-            GL.DeleteShader( vertexShaderHandle );
-            GL.DeleteShader( fragmentShaderHandle );
+            // Delete the shaders as the program has them now
+            GL.DeleteShader( vertexShaderName );
+            GL.DeleteShader( fragmentShaderName );
 
-            return shaderProgramHandle;
+            return true;
         }
         
         //-----------------------------------------------------------------------------------------
-        protected override void OnResize(EventArgs e)
+        private bool _InitBuffers()
         {
-            base.OnResize(e);
-            GL.Viewport(ClientRectangle.X, ClientRectangle.Y, ClientRectangle.Width, ClientRectangle.Height);
-            float aspect = (float)Width / (float)Height;
-            _projMatrix = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(50.0f), aspect, 0.1f, 1000.0f);
-        }
+            float[] vertexData = new float[] 
+            {
+                // back
+                -0.25f, 0.25f,-0.25f,1,   -0.25f,-0.25f,-0.25f,1,    0.25f,-0.25f,-0.25f,1,
+                 0.25f,-0.25f,-0.25f,1,    0.25f, 0.25f,-0.25f,1,   -0.25f, 0.25f,-0.25f,1,
+                // right
+                 0.25f,-0.25f,-0.25f,1,    0.25f,-0.25f, 0.25f,1,    0.25f, 0.25f,-0.25f,1,
+                 0.25f,-0.25f, 0.25f,1,    0.25f, 0.25f, 0.25f,1,    0.25f, 0.25f,-0.25f,1,
+                // front
+                 0.25f,-0.25f, 0.25f,1,   -0.25f,-0.25f, 0.25f,1,    0.25f, 0.25f, 0.25f,1,
+                -0.25f,-0.25f, 0.25f,1,   -0.25f, 0.25f, 0.25f,1,    0.25f, 0.25f, 0.25f,1,
+                // left
+                -0.25f,-0.25f, 0.25f,1,   -0.25f,-0.25f,-0.25f,1,   -0.25f, 0.25f, 0.25f,1,
+                -0.25f,-0.25f,-0.25f,1,   -0.25f, 0.25f,-0.25f,1,   -0.25f, 0.25f, 0.25f,1,
+                // bottom
+                -0.25f,-0.25f, 0.25f,1,    0.25f,-0.25f, 0.25f,1,    0.25f,-0.25f,-0.25f,1,
+                 0.25f,-0.25f,-0.25f,1,   -0.25f,-0.25f,-0.25f,1,   -0.25f,-0.25f, 0.25f,1,
+                // top
+                -0.25f, 0.25f,-0.25f,1,    0.25f, 0.25f,-0.25f,1,    0.25f, 0.25f, 0.25f,1,
+                 0.25f, 0.25f, 0.25f,1,   -0.25f, 0.25f, 0.25f,1,   -0.25f, 0.25f,-0.25f,1
+            };
 
-        //-----------------------------------------------------------------------------------------
-        private int initTransform()
-        {
-            int transformHandle;
-
-            transformHandle = GL.GetUniformLocation( _renderingProgramHandle, "transform_matrix" );
-
-            return transformHandle;
-        }
-
-        //-----------------------------------------------------------------------------------------
-        private void initVertices()
-        {
-            int verticesHandle;
-
-
-            GL.GenBuffers(1, out verticesHandle);
-            GL.BindBuffer(BufferTarget.ShaderStorageBuffer, verticesHandle);
-            GL.BufferData(BufferTarget.ShaderStorageBuffer, (IntPtr)(1024 * sizeof(float)),
-                          IntPtr.Zero, BufferUsageHint.StaticDraw );
-
-            int bbpIndex = 0;
-            GL.BindBufferBase(BufferRangeTarget.ShaderStorageBuffer, bbpIndex, verticesHandle);
+            GL.GenBuffers( 1, out _shaderStorageBufferName );
+            GL.BindBuffer( BufferTarget.ShaderStorageBuffer, _shaderStorageBufferName );
+            GL.BufferData( BufferTarget.ShaderStorageBuffer, (IntPtr)(1024 * sizeof(float)),
+                           IntPtr.Zero, BufferUsageHint.StaticDraw );
 
             float[] color2 = new float[3];
             
             int bufferOffset;
-            for(int vertexNum = 0; vertexNum < 36; vertexNum++)
+            for( int vertexNum = 0; vertexNum < 36; vertexNum++ )
             {
                 bufferOffset = vertexNum * (8 * sizeof(float));
-                GL.BufferSubData(BufferTarget.ShaderStorageBuffer, (IntPtr)bufferOffset, 
-                                 (IntPtr)(4*sizeof(float)), ref _vertices[vertexNum*4] );
+                GL.BufferSubData( BufferTarget.ShaderStorageBuffer, (IntPtr)bufferOffset, 
+                                  (IntPtr)(4*sizeof(float)), ref vertexData[vertexNum * 4] );
 
-                color2[0] = _vertices[(vertexNum*4)+0] * 2.0f + 0.5f;
-                color2[1] = _vertices[(vertexNum*4)+1] * 2.0f + 0.5f;
-                color2[2] = _vertices[(vertexNum*4)+2] * 2.0f + 0.5f;
+                color2[0] = vertexData[(vertexNum * 4) + 0] * 2.0f + 0.5f;
+                color2[1] = vertexData[(vertexNum * 4) + 1] * 2.0f + 0.5f;
+                color2[2] = vertexData[(vertexNum * 4) + 2] * 2.0f + 0.5f;
                 
-                GL.BufferSubData(BufferTarget.ShaderStorageBuffer, (IntPtr)(bufferOffset + (4 * sizeof(float))), 
-                                 (IntPtr)(3*sizeof(float)), color2 );
-
+                GL.BufferSubData( BufferTarget.ShaderStorageBuffer, (IntPtr)(bufferOffset + (4 * sizeof(float))), 
+                                  (IntPtr)(3 * sizeof(float)), color2 );
             }
-          
-            //IntPtr ptr = GL.MapBuffer(BufferTarget.ShaderStorageBuffer,BufferAccess.ReadWrite);
-            //float[] managedArray = new float[100];
-            //Marshal.Copy(ptr,managedArray,0,100);
-            //GL.UnmapBuffer(BufferTarget.ShaderStorageBuffer);
 
-       }
+            GL.BindBufferBase( BufferRangeTarget.ShaderStorageBuffer, 0, _shaderStorageBufferName );
 
-        //-----------------------------------------------------------------------------------------
-        protected override void OnLoad (EventArgs e)
-        {
-            _renderingProgramHandle = CompileShaders();
-                
-            //Create VAO object to hold vertex shader inputs and attach it to our context
-            GL.GenVertexArrays(1, out _vaoHandle);
-            GL.BindVertexArray(_vaoHandle);
 
-            this.initVertices();
-            _transformHandle = this.initTransform();
-
-            GL.Enable(EnableCap.CullFace);
-            GL.FrontFace(FrontFaceDirection.Cw);
+            return true;
         }
 
         //-----------------------------------------------------------------------------------------
-        protected override void OnUnload(EventArgs e)
+        private bool _InitVao()
         {
-            GL.DeleteVertexArrays(1, ref _vaoHandle);
-            GL.DeleteProgram(_renderingProgramHandle);
-        }
-        
-        //-----------------------------------------------------------------------------------------
-        //Our rendering function
-        protected override void OnRenderFrame(FrameEventArgs e)
-        {
-            // Get elapsed time since application startup
-            float elapsedSeconds = (float)(Program.ElapsedTimeSeconds);
-
-            // Set color to green
-            _color[0] = 0.0f;
-            _color[1] = 0.2f;
+            // Create VAO object to hold vertex shader inputs and attach it to our context. As 
+            // OpenGL requires the VAO object (whether or not it's used) we do this here.
+            GL.GenVertexArrays( 1, out _vertexArrayName );
+            GL.BindVertexArray( _vertexArrayName );
             
-            // Clear the window with given color
-            GL.ClearBuffer(ClearBuffer.Color, 0, _color);
+            return true;
+        }
 
-            // Use the program object we created earlier for rendering
-            GL.UseProgram(_renderingProgramHandle);
+        //-----------------------------------------------------------------------------------------
+        private bool _initUniforms()
+        {
+            _uniformLocation = GL.GetUniformLocation( _shaderProgramName, "transform_matrix" );
 
+            return true;
+        }
+
+        //-----------------------------------------------------------------------------------------
+        private void _UpdateTransform()
+        {
             Matrix4 transformMatrix;
+            float elapsedSeconds = (float)Program.ElapsedTimeSeconds;
+
             float f = elapsedSeconds * 0.3f;
-            transformMatrix = Matrix4.CreateFromAxisAngle(new Vector3(1.0f, 0.0f, 0.0f), 
-                                                   elapsedSeconds * MathHelper.DegreesToRadians(81.0f) );
-            transformMatrix *= Matrix4.CreateFromAxisAngle(new Vector3(0.0f, 1.0f, 0.0f), 
-                                                    elapsedSeconds * MathHelper.DegreesToRadians(45.0f) );
-            transformMatrix *= Matrix4.CreateTranslation( (float)(Math.Sin(2.1f * f) * 0.5f), 
-                                                   (float)(Math.Cos(1.7f * f) * 0.5f),
-                                                   (float)(Math.Sin(1.3f * f) * Math.Cos(1.5f * f) * 2.0f));
+
+            transformMatrix = Matrix4.CreateFromAxisAngle( new Vector3( 1.0f, 0.0f, 0.0f ), 
+                                                           elapsedSeconds * MathHelper.DegreesToRadians( 81.0f ) );
+            transformMatrix *= Matrix4.CreateFromAxisAngle( new Vector3( 0.0f, 1.0f, 0.0f ), 
+                                                            elapsedSeconds * MathHelper.DegreesToRadians( 45.0f ) );
+            transformMatrix *= Matrix4.CreateTranslation( (float)(Math.Sin( 2.1f * f ) * 0.5f), 
+                                                   (float)(Math.Cos( 1.7f * f ) * 0.5f),
+                                                   (float)(Math.Sin( 1.3f * f ) * Math.Cos( 1.5f * f ) * 2.0f) );
             transformMatrix *= Matrix4.CreateTranslation( 0.0f, 0.0f, -4.0f );
             transformMatrix *= Matrix4.CreateScale( 1.0f, 1.0f, 1.0f );
             transformMatrix *= _projMatrix;
 
             // Set the transformation matrix
-            GL.UniformMatrix4( _transformHandle, false, ref transformMatrix );
+            GL.UniformMatrix4( _uniformLocation, false, ref transformMatrix );
+        }
 
-            //GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Line );
+        //-----------------------------------------------------------------------------------------
+        protected override void OnResize( EventArgs e )
+        {
+            GL.Viewport( ClientRectangle.X, ClientRectangle.Y, 
+                         ClientRectangle.Width, ClientRectangle.Height );
+            float aspect = (float)Width / (float)Height;
+            _projMatrix = Matrix4.CreatePerspectiveFieldOfView( MathHelper.DegreesToRadians( 50.0f ), 
+                                                                aspect, 0.1f, 1000.0f );
+        }
+
+        //-----------------------------------------------------------------------------------------
+        protected override void OnUnload( EventArgs e )
+        {
+            GL.DeleteProgram( _shaderProgramName );
+            GL.DeleteBuffers( 1, ref _shaderStorageBufferName );
+            GL.DeleteVertexArrays( 1, ref _vertexArrayName );
+        }
+        
+        //-----------------------------------------------------------------------------------------
+        protected override void OnLoad( EventArgs e )
+        {
+            this._InitProgram();
+            this._InitBuffers();             /* note: this has to come before _InitVao() */
+            this._InitVao();
+            this._initUniforms();
+
+            GL.Enable( EnableCap.CullFace );
+            GL.FrontFace( FrontFaceDirection.Cw );
+        }
+
+        //-----------------------------------------------------------------------------------------
+        protected override void OnRenderFrame( FrameEventArgs e )
+        {
+            // Clear the window with given color
+            GL.ClearBuffer( ClearBuffer.Color, 0, Statics.colorGreen );
+
+            // Use the program object we created earlier for rendering
+            GL.UseProgram( _shaderProgramName );
+
+            this._UpdateTransform();
+
+            //GL.PolygonMode( MaterialFace.FrontAndBack, PolygonMode.Line );
 
             // Draw 6 faces of 2 triangles of 3 vertices each = 36 vertices
-            GL.DrawArrays(PrimitiveType.Triangles, 0, 36);
+            GL.DrawArrays( PrimitiveType.Triangles, 0, 36 );
             
             SwapBuffers();
         }

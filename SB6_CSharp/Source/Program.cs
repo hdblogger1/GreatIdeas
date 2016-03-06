@@ -48,11 +48,12 @@ namespace SB6_CSharp
                 //using( var example = new Example_05L01_05L05() )
                 //using( var example = new Example_05L06_05L07() )
                 //using( var example = new Example_05L08() )
-                using( var example = new Example_05L09_05L17() )
+                //using( var example = new Example_05L09_05L17A() )
+                //using( var example = new Example_05L09_05L17B() )
                 //using( var example = new Example_05L20_05L25() )
                 //using( var example = new Example_05L26() )
                 //using( var example = new Example_05L27_05L28() )
-                //using( var example = new Example_05L29_05L32() )
+                using( var example = new Example_05L29_05L32() )
                 {
                     string strVersion = GL.GetString( StringName.Version );
                     Console.WriteLine( strVersion );

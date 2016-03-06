@@ -1,11 +1,7 @@
-﻿//With USE_SHARED_LAYOUT defined, the vertex shader will use a 'shared' uniform block. With it *NOT*
-//defined, the vertex shader will use a 'standard' (std140) uniform block.
-#define USE_SHARED_LAYOUT
-
-//With USE_BOUNDED_LAYOUT defined, the vertex shader will use a 'standard' (std140) uniform block
+﻿//With USE_BOUNDED_LAYOUT defined, the vertex shader will use a 'standard' (std140) uniform block
 //which is bound to a fixed uniform block binding point. With it *NOT* defined, the vertex shader 
 //will use a 'standard' (std140) uniform block that is unbounded.
-//#define USE_BOUNDED_LAYOUT
+#define USE_BOUNDED_LAYOUT
 
 using System;
 using System.Drawing;
@@ -18,106 +14,89 @@ using System.Runtime.InteropServices;
 
 namespace SB6_CSharp
 {
-    class Example_05L09_05L17 : GameWindow
+    //=============================================================================================
+    /// <summary>
+    /// Our OpenTK GameWindow derived application class which takes care of creating a window, 
+    /// handling input, and displaying the rendered results to the user.
+    /// </summary>
+    class Example_05L09_05L17B : GameWindow
     {
-        float[] _color = new float[] { 1.0f, 0.0f, 0.0f, 1.0f };
-
-        //Because this could be used in a 'standard' uniform, we need to place each vertice on a
-        //4N-byte boundry
-        float[] _vertices = new float[] 
+        //-----------------------------------------------------------------------------------------
+        /// <summary>
+        /// The Statics container class holding class-wide static globals
+        /// </summary>
+        static class Statics
         {
-            // back
-            -0.25f, 0.25f,-0.25f,1,   -0.25f,-0.25f,-0.25f,1,    0.25f,-0.25f,-0.25f,1,
-             0.25f,-0.25f,-0.25f,1,    0.25f, 0.25f,-0.25f,1,   -0.25f, 0.25f,-0.25f,1,
-            // right
-             0.25f,-0.25f,-0.25f,1,    0.25f,-0.25f, 0.25f,1,    0.25f, 0.25f,-0.25f,1,
-             0.25f,-0.25f, 0.25f,1,    0.25f, 0.25f, 0.25f,1,    0.25f, 0.25f,-0.25f,1,
-            // front
-             0.25f,-0.25f, 0.25f,1,   -0.25f,-0.25f, 0.25f,1,    0.25f, 0.25f, 0.25f,1,
-            -0.25f,-0.25f, 0.25f,1,   -0.25f, 0.25f, 0.25f,1,    0.25f, 0.25f, 0.25f,1,
-            // left
-            -0.25f,-0.25f, 0.25f,1,   -0.25f,-0.25f,-0.25f,1,   -0.25f, 0.25f, 0.25f,1,
-            -0.25f,-0.25f,-0.25f,1,   -0.25f, 0.25f,-0.25f,1,   -0.25f, 0.25f, 0.25f,1,
-            // bottom
-            -0.25f,-0.25f, 0.25f,1,    0.25f,-0.25f, 0.25f,1,    0.25f,-0.25f,-0.25f,1,
-             0.25f,-0.25f,-0.25f,1,   -0.25f,-0.25f,-0.25f,1,   -0.25f,-0.25f, 0.25f,1,
-            // top
-            -0.25f, 0.25f,-0.25f,1,    0.25f, 0.25f,-0.25f,1,    0.25f, 0.25f, 0.25f,1,
-             0.25f, 0.25f, 0.25f,1,   -0.25f, 0.25f, 0.25f,1,   -0.25f, 0.25f,-0.25f,1
-        };
+            public static readonly float[] colorGreen = { 0.0f, 0.25f, 0.0f, 1.0f };
+        }
 
-        int _renderingProgramHandle;
-        int _vaoHandle;
+        //-----------------------------------------------------------------------------------------
+        /// <summary>
+        /// A management class for OpenGL buffer object names
+        /// </summary>
+        static class Buffers
+        {
+            public enum Type { VERTEX_ARRAY, UNIFORM, NUM_BUFFERS };
+            public static uint Name( Type type ) { return Names[(int)type]; }
+            public static int Count()            { return (int)Type.NUM_BUFFERS; }
 
-        int _vabHandle;
-        int _uboHandle;
+            public static uint[] Names = new uint[(int)Type.NUM_BUFFERS];
+        }
 
+        //-----------------------------------------------------------------------------------------
+        /// <summary>
+        /// A management class for OpenGL uniform information
+        /// </summary>
         class UniformInfo
         {
-            public string[] names = new string[] {
+            static public string[] Names = new string[] {
                 "TransformBlock.scale",
                 "TransformBlock.translation",
                 "TransformBlock.rotation",
                 "TransformBlock.proj_matrix",
             };        
-            public int[] indices = new int[4];
-            public int[] offsets = new int[4];
-            public int[] arrayStrides = new int[4];
-            public int[] matrixStrides = new int[4];
+            public int[] Indices = new int[Names.Length];
+            public int[] Offsets = new int[Names.Length];
+            public int[] ArrayStrides = new int[Names.Length];
+            public int[] MatrixStrides = new int[Names.Length];
         };
+
+        private int _shaderProgramName;
+        private int _vertexArrayName;
         
-        UniformInfo _uniformInfo = new UniformInfo();
-        Matrix4 _projMatrix;
+        private UniformInfo _uniformInfo = new UniformInfo();
+        private Matrix4 _projMatrix;
 
         //-----------------------------------------------------------------------------------------
-        public Example_05L09_05L17() 
-            : base( 640, 480, GraphicsMode.Default, "OpenTK Example", 0, DisplayDevice.Default
-                    // ask for an OpenGL 4.3 or higher default(core?) context
-                    , 4, 3, GraphicsContextFlags.Default)
+        public Example_05L09_05L17B() 
+            : base( 800, 600, GraphicsMode.Default, "OpenGL SuperBible - Listing 5.6 thru 5.7 (Standard UBO)", 
+                    0, DisplayDevice.Default, 4, 3, GraphicsContextFlags.Default )
         {
         }
 
         //-----------------------------------------------------------------------------------------
-        public int CompileShaders()
+        private bool _InitProgram()
         {
-            int vertexShaderHandle, fragmentShaderHandle;
-            int shaderProgramHandle;
+            int vertexShaderName, fragmentShaderName;
                 
-            //Source code for vertex shader
-            string vertexShaderSource = @"#version 430 core
-                
+            // Source code for vertex shader
+            string vertexShaderSource = @"
+                #version 430 core
                 layout(location = 1) in vec4 position;
-
                 out vec4 vs_color;" +
               
-#if USE_SHARED_LAYOUT
-                @"// 'shared' (default) layout
-                uniform TransformBlock
-                {
-                    float scale;       // Global scal to apply to everything
-                    vec3  translation; // Translation in X, Y, and Z
-                    float rotation[3]; // Rotation around X, Y, and Z axes
-                    mat4  proj_matrix; // A generalized projection matrix to apply
-                                       //   after scale and rotate
-                } transform;" +
-#else
-#  if USE_BOUNDED_LAYOUT
-                @"// 'standard' with fixed binding point layout
+#if USE_BOUNDED_LAYOUT
+                @"
+                // 'standard' layout with fixed binding point
                 layout(std140, binding=2) uniform TransformBlock
-                {                       // base alignment | offset | aligned offset
-                    float scale;        //       4             0        0
-                    vec3  translation;  //      16             4       16
-                    float rotation[3];  //      16            28       32 (rotation[0])
-                                        //                             48 (rotation[1])
-                                        //                             64 (rotation[2])
-                    mat4  proj_matrix;  //      16            80       80 (column 0)
-                                        //                             96 (column 1)
-                                        //                            112 (column 2)
-                                        //                            128 (column 3) 
-                } transform;" +
-#  else
-                @"// 'standard' layout
+                " +
+#else
+                @"
+                // 'standard' layout
                 layout(std140) uniform TransformBlock
+                " +
+#endif
+                @"
                 {                       // base alignment | offset | aligned offset
                     float scale;        //       4             0        0
                     vec3  translation;  //      16             4       16
@@ -128,10 +107,9 @@ namespace SB6_CSharp
                                         //                             96 (column 1)
                                         //                            112 (column 2)
                                         //                            128 (column 3) 
-                } transform;" +
-#  endif
-#endif 
-                @"mat4 translate(vec3 axis)
+                } transform;
+                
+                mat4 translate(vec3 axis)
                 {
                     // row-major memory layout
                     const float m[16] = float[16]( 1.0, 0.0, 0.0, axis.x,
@@ -213,7 +191,7 @@ namespace SB6_CSharp
                 }
                 ";
                
-            //Source code for fragment shader
+            // Source code for fragment shader
             string fragmentShaderSource = @"
                 #version 430 core
                 out vec4 color;
@@ -221,225 +199,233 @@ namespace SB6_CSharp
 
                 void main(void)
                 {
-                    //color = vec4(0.0, 0.8, 1.0, 1.0);
                     color = vs_color;
                 }
                 ";
 
-            //Create and compile vertex shader
-            vertexShaderHandle = GL.CreateShader(ShaderType.VertexShader);
-            GL.ShaderSource( vertexShaderHandle, vertexShaderSource );
-            GL.CompileShader( vertexShaderHandle );
+            // Create and compile vertex shader
+            vertexShaderName = GL.CreateShader( ShaderType.VertexShader );
+            GL.ShaderSource( vertexShaderName, vertexShaderSource );
+            GL.CompileShader( vertexShaderName );
 
-            //Create and compile fragment shader
-            fragmentShaderHandle = GL.CreateShader(ShaderType.FragmentShader);
-            GL.ShaderSource( fragmentShaderHandle, fragmentShaderSource );
-            GL.CompileShader( fragmentShaderHandle );
+            // Create and compile fragment shader
+            fragmentShaderName = GL.CreateShader( ShaderType.FragmentShader );
+            GL.ShaderSource( fragmentShaderName, fragmentShaderSource );
+            GL.CompileShader( fragmentShaderName );
 
-            //Create program, attach shaders to it, and link it
-            shaderProgramHandle = GL.CreateProgram();
-            GL.AttachShader( shaderProgramHandle, vertexShaderHandle );
-            Console.WriteLine(GL.GetShaderInfoLog(vertexShaderHandle));
-            GL.AttachShader( shaderProgramHandle, fragmentShaderHandle );
-            Console.WriteLine(GL.GetShaderInfoLog(fragmentShaderHandle));
-            GL.LinkProgram( shaderProgramHandle );
+            // Create program, attach shaders to it, and link it
+            _shaderProgramName = GL.CreateProgram();
+            GL.AttachShader( _shaderProgramName, vertexShaderName );
+            Console.WriteLine( GL.GetShaderInfoLog( vertexShaderName ) );
+            GL.AttachShader( _shaderProgramName, fragmentShaderName );
+            Console.WriteLine( GL.GetShaderInfoLog( fragmentShaderName ) );
+            GL.LinkProgram( _shaderProgramName );
 
-            //Delete the shaders as the program has them now
-            GL.DeleteShader( vertexShaderHandle );
-            GL.DeleteShader( fragmentShaderHandle );
+            // Delete the shaders as the program has them now
+            GL.DeleteShader( vertexShaderName );
+            GL.DeleteShader( fragmentShaderName );
 
-            return shaderProgramHandle;
+            return true;
         }
         
         //-----------------------------------------------------------------------------------------
-        protected override void OnResize(EventArgs e)
+        private bool _InitBuffers()
         {
-            base.OnResize(e);
-            GL.Viewport(ClientRectangle.X, ClientRectangle.Y, ClientRectangle.Width, ClientRectangle.Height);
-            float aspect = (float)Width / (float)Height;
-            _projMatrix = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(50.0f), aspect, 0.1f, 1000.0f);
+            float[] vertexData = new float[] 
+            {
+                // back
+                -0.25f, 0.25f,-0.25f,   -0.25f,-0.25f,-0.25f,    0.25f,-0.25f,-0.25f,
+                 0.25f,-0.25f,-0.25f,    0.25f, 0.25f,-0.25f,   -0.25f, 0.25f,-0.25f,
+                // right
+                 0.25f,-0.25f,-0.25f,    0.25f,-0.25f, 0.25f,    0.25f, 0.25f,-0.25f,
+                 0.25f,-0.25f, 0.25f,    0.25f, 0.25f, 0.25f,    0.25f, 0.25f,-0.25f,
+                // front
+                 0.25f,-0.25f, 0.25f,   -0.25f,-0.25f, 0.25f,    0.25f, 0.25f, 0.25f,
+                -0.25f,-0.25f, 0.25f,   -0.25f, 0.25f, 0.25f,    0.25f, 0.25f, 0.25f,
+                // left
+                -0.25f,-0.25f, 0.25f,   -0.25f,-0.25f,-0.25f,   -0.25f, 0.25f, 0.25f,
+                -0.25f,-0.25f,-0.25f,   -0.25f, 0.25f,-0.25f,   -0.25f, 0.25f, 0.25f,
+                // bottom
+                -0.25f,-0.25f, 0.25f,    0.25f,-0.25f, 0.25f,    0.25f,-0.25f,-0.25f,
+                 0.25f,-0.25f,-0.25f,   -0.25f,-0.25f,-0.25f,   -0.25f,-0.25f, 0.25f,
+                // top
+                -0.25f, 0.25f,-0.25f,    0.25f, 0.25f,-0.25f,    0.25f, 0.25f, 0.25f,
+                 0.25f, 0.25f, 0.25f,   -0.25f, 0.25f, 0.25f,   -0.25f, 0.25f,-0.25f,
+            };
+
+            // Generate our vertext and uniform buffers
+            GL.GenBuffers( Buffers.Count(), Buffers.Names );
+
+            // Bind our vertext array and fill it with our vertex data
+            GL.BindBuffer( BufferTarget.ArrayBuffer, Buffers.Name( Buffers.Type.VERTEX_ARRAY ) );
+            GL.BufferData( BufferTarget.ArrayBuffer, (IntPtr)(vertexData.Length * sizeof(float)), 
+                           vertexData, BufferUsageHint.StaticDraw );
+            GL.BindBuffer( BufferTarget.ArrayBuffer, 0 );
+
+            // Bind our uniform buffer and intitalize it (zero-fill)
+            GL.BindBuffer( BufferTarget.UniformBuffer, Buffers.Name( Buffers.Type.UNIFORM ) );
+            GL.BufferData( BufferTarget.UniformBuffer, (IntPtr)(1024 * sizeof(float)), 
+                           IntPtr.Zero, BufferUsageHint.DynamicDraw );
+
+            GL.BindBuffer( BufferTarget.UniformBuffer, 0 );
+
+            return true;
         }
 
         //-----------------------------------------------------------------------------------------
-        public int SetupVertexAttributeBuffer()
+        private bool _InitVao()
         {
-            int vabHandle;
-
-            //Generate a vertex attribute buffer and fill it with our global vertices array
-            //Generate a name for the buffer
-            GL.GenBuffers(1, out vabHandle);
-
-            //Bind it to the context using the GL_ARRAY_BUFFER binding point
-            GL.BindBuffer(BufferTarget.ArrayBuffer, vabHandle);
-
-            //Specify the amount of storage we want and fill it with our vetices array
-            GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(_vertices.Length * sizeof(float)), 
-                          _vertices, BufferUsageHint.StaticDraw);
-
-            //Set up our vertex attribute with the attributes location layout qualifier
-            int vabIndex = 1;
-            GL.VertexAttribPointer(vabIndex, 4, VertexAttribPointerType.Float, false, 0, 0 );
-            GL.EnableVertexAttribArray(vabIndex);
+            // Create VAO object to hold vertex shader inputs and attach it to our context. As 
+            // OpenGL requires the VAO object (whether or not it's used) we do this here.
+            GL.GenVertexArrays( 1, out _vertexArrayName );
+            GL.BindVertexArray( _vertexArrayName );
             
-            return vabHandle;
+            // Set up our vertex attribute with the attributes location layout qualifier
+            GL.BindBuffer( BufferTarget.ArrayBuffer, Buffers.Name(Buffers.Type.VERTEX_ARRAY) );
+            GL.VertexAttribPointer( 1, 3, VertexAttribPointerType.Float, false, 0, 0 );
+            GL.BindBuffer( BufferTarget.ArrayBuffer, 0 );
+
+            // Enable the attribute
+            GL.EnableVertexAttribArray( 1 );
+
+            return true;
         }
 
         //-----------------------------------------------------------------------------------------
-        public int SetupUniform()
+        private bool _InitUniforms()
         {
-            int uboHandle;
-            
-            //Generate a name for the buffer
-            GL.GenBuffers(1, out uboHandle);
+            int ubpIndex;
 
-            //Bind it to the context using the GL_UNIFORM_BUFFER binding point
-            GL.BindBuffer(BufferTarget.UniformBuffer, uboHandle);
-
-            //Specify the amount of storage we want to allocate for our uniform
-            GL.BufferData(BufferTarget.UniformBuffer, (IntPtr)(1024 * sizeof(float)), 
-                          IntPtr.Zero, BufferUsageHint.DynamicDraw);
-            
-            int ubpIndex; //buffer binding point of the uniform block
-
-#if (!USE_SHARED_LAYOUT && USE_BOUNDED_LAYOUT)
-            //Set the uniform block binding point index to the 'binding' layout qualifier of the 
-            //uniform block
+#if(USE_BOUNDED_LAYOUT)            
+            // Set the uniform block binding point index to the 'binding' layout qualifier of the 
+            // uniform block
             ubpIndex = 2; 
 #else
-            //Get the index of the uniform block
-            int uboIndex = GL.GetUniformBlockIndex(_renderingProgramHandle, "TransformBlock" );
-            
-            //Pick an arbitrary uniform buffer binding point to use for the uniform block
+            // Pick an arbitrary uniform buffer binding point to use for the uniform block
             ubpIndex = 3; 
+
+            // Get the index of the uniform block
+            int uboIndex = GL.GetUniformBlockIndex( _shaderProgramName, "TransformBlock" );
             
-            //Assign a uniform buffer binding point of <ubpIndex> for the uniform block <uboIndex>
-            GL.UniformBlockBinding(_renderingProgramHandle, uboIndex, ubpIndex);
+            // Assign a uniform buffer binding point of <ubpIndex> for the uniform block <uboIndex>
+            GL.UniformBlockBinding( _shaderProgramName, uboIndex, ubpIndex );
+
 #endif
-            //Tell OpenGL that we're binding the buffer to the <ubpIndex> uniform buffer binding 
-            //point
-            GL.BindBufferBase(BufferRangeTarget.UniformBuffer, ubpIndex, uboHandle);
-
-            return uboHandle;
-        }
-
-        //-----------------------------------------------------------------------------------------
-        public void InitUniformData()
-        {
-#if USE_SHARED_LAYOUT
-            // Retrieve the indices of the uniform block members
-            GL.GetUniformIndices(_renderingProgramHandle, 4, _uniformInfo.names, _uniformInfo.indices);
-
-            // Retrieve the information about the uniform block members
-            GL.GetActiveUniforms(_renderingProgramHandle, 4, _uniformInfo.indices, 
-                                 ActiveUniformParameter.UniformOffset, _uniformInfo.offsets );
-            GL.GetActiveUniforms(_renderingProgramHandle, 4, _uniformInfo.indices, 
-                                 ActiveUniformParameter.UniformArrayStride, _uniformInfo.arrayStrides );
-            GL.GetActiveUniforms(_renderingProgramHandle, 4, _uniformInfo.indices, 
-                                 ActiveUniformParameter.UniformMatrixStride, _uniformInfo.matrixStrides );
-#else
             // Set the 'Standard' indices of the uniform block members
-            _uniformInfo.offsets[0] = 0;
-            _uniformInfo.offsets[1] = 16;
-            _uniformInfo.offsets[2] = 32;
-            _uniformInfo.offsets[3] = 80;
+            _uniformInfo.Offsets[0] = 0;
+            _uniformInfo.Offsets[1] = 16;
+            _uniformInfo.Offsets[2] = 32;
+            _uniformInfo.Offsets[3] = 80;
 
-            //Set strides of the uniform block memebers. Entrys not arrays or matrices are defaulted
-            _uniformInfo.arrayStrides[2] = 16;
-            _uniformInfo.matrixStrides[3] = 16;
-#endif
+            // Set strides of the uniform block memebers. Entrys that are not arrays or matrices are 
+            // defaulted
+            _uniformInfo.ArrayStrides[2] = 16;
+            _uniformInfo.MatrixStrides[3] = 16;
 
-            //Scale is the only static uniform data we have so we can set it here. Translation, 
-            //rotation and projection is done dynamically during frame rendering (OnRenderFrame).
+            // Tell OpenGL that we're binding the buffer to the <ubpIndex> uniform buffer binding point
+            GL.BindBuffer( BufferTarget.UniformBuffer, Buffers.Name( Buffers.Type.UNIFORM ) );         
+            GL.BindBufferBase( BufferRangeTarget.UniformBuffer, ubpIndex, 
+                               (int) Buffers.Name( Buffers.Type.UNIFORM ) );
+    
+            // Scale is the only static uniform data we have so we can set it here. Translation, 
+            // rotation and projection is done dynamically during frame rendering in _UpdateUniform().
             float scale = 1.5f;
-            GL.BufferSubData(BufferTarget.UniformBuffer, (IntPtr)_uniformInfo.offsets[0], 
-                             (IntPtr)(1 * sizeof(float)), ref scale );            
+            GL.BufferSubData( BufferTarget.UniformBuffer, (IntPtr)_uniformInfo.Offsets[0], 
+                              (IntPtr)(1 * sizeof(float)), ref scale );            
+           
+            GL.BindBuffer( BufferTarget.UniformBuffer, 0 );
+
+            return true;
         }
 
         //-----------------------------------------------------------------------------------------
-        protected override void OnLoad (EventArgs e)
+        private void _UpdateUniforms( float elapsedSeconds )
         {
-            _renderingProgramHandle = this.CompileShaders();
-                
-            //Create VAO object to hold vertex shader inputs and attach it to our context
-            GL.GenVertexArrays(1, out _vaoHandle);
-            GL.BindVertexArray(_vaoHandle);
+            GL.BindBuffer( BufferTarget.UniformBuffer, Buffers.Name( Buffers.Type.UNIFORM ) );
 
-            _vabHandle = this.SetupVertexAttributeBuffer();
+            // ========== SCALE ==========
+            // Already set _InitUniform() due to its static nature, but we could set it here also.
+            //float scale = 1.0f;
+            //GL.BufferSubData( BufferTarget.UniformBuffer, (IntPtr)_uniformInfo.Offsets[0], 
+            //                 (IntPtr)(1 * sizeof(float)), ref scale );  
 
-            _uboHandle = this.SetupUniform();
-
-            this.InitUniformData();
-            
-            GL.Enable(EnableCap.CullFace);
-            GL.FrontFace(FrontFaceDirection.Cw);
-        }
-
-        //-----------------------------------------------------------------------------------------
-        protected override void OnUnload(EventArgs e)
-        {
-            GL.DeleteBuffer(_uboHandle);
-            GL.DeleteBuffer(_vabHandle);
-            GL.DeleteVertexArrays(1, ref _vaoHandle);
-            GL.DeleteProgram(_renderingProgramHandle);
-        }
-        
-        //-----------------------------------------------------------------------------------------
-        //Our rendering function
-        protected override void OnRenderFrame(FrameEventArgs e)
-        {
-            // Get elapsed time since application startup
-            float elapsedSeconds = (float)(Program.ElapsedTimeSeconds);
-
-            //Set color to green
-            _color[0] = 0.0f;
-            _color[1] = 0.2f;
-            
-            //Clear the window with given color
-            GL.ClearBuffer(ClearBuffer.Color, 0, _color);
- 
-            //Use the program object we created earlier for rendering
-            GL.UseProgram(_renderingProgramHandle);
-
-            GL.BindBuffer(BufferTarget.UniformBuffer, _uboHandle);
-
-            //SCALE
-            float scale = 1.0f;
-            GL.BufferSubData(BufferTarget.UniformBuffer, (IntPtr)_uniformInfo.offsets[0], 
-                             (IntPtr)(1 * sizeof(float)), ref scale );  
-
-            //TRANSLATION
+            // ========== TRANSLATION ==========
             Vector3 translation;
             float f = elapsedSeconds * 0.3f;
             translation.X = (float)(Math.Sin(2.1f * f) * 0.5f);
             translation.Y = (float)(Math.Cos(1.7f * f) * 0.5f);
             translation.Z = (float)(Math.Sin(1.3f * f) * Math.Cos(1.5f * f) * 2.0f) - 3.0f;
 
-            GL.BufferSubData(BufferTarget.UniformBuffer, (IntPtr)_uniformInfo.offsets[1], 
-                             (IntPtr)(3 * sizeof(float)), ref translation );  
+            GL.BufferSubData( BufferTarget.UniformBuffer, (IntPtr)_uniformInfo.Offsets[1], 
+                              (IntPtr)(3 * sizeof(float)), ref translation );  
 
-            //ROTATION
+            // ========== ROTATION ==========
             float[] rotation = new float[3];
-            rotation[0] = elapsedSeconds * MathHelper.DegreesToRadians(81.0f);
-            rotation[1] = elapsedSeconds * MathHelper.DegreesToRadians(45.0f);
+            rotation[0] = elapsedSeconds * MathHelper.DegreesToRadians( 81.0f );
+            rotation[1] = elapsedSeconds * MathHelper.DegreesToRadians( 45.0f );
             rotation[2] = rotation[0];
 
-            int offset = _uniformInfo.offsets[2];
-            for(int n=0; n<3; n++)
+            int offset = _uniformInfo.Offsets[2];
+            for( int n=0; n<3; n++ )
             {
-                GL.BufferSubData(BufferTarget.UniformBuffer, (IntPtr)offset, 
-                                 (IntPtr)(1 * sizeof(float)), ref rotation[n] );
-                offset += _uniformInfo.arrayStrides[2];
+                GL.BufferSubData( BufferTarget.UniformBuffer, (IntPtr)offset, 
+                                  (IntPtr)(1 * sizeof(float)), ref rotation[n] );
+                offset += _uniformInfo.ArrayStrides[2];
             }
             
-            //PROJECTION
-            GL.BufferSubData(BufferTarget.UniformBuffer, (IntPtr)_uniformInfo.offsets[3], 
-                             (IntPtr)(16 * sizeof(float)), ref _projMatrix );
- 
-            //Tell OpenGL to draw outlines only
-            //GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Line );
+            // ========== PROJECTION ==========
+            GL.BufferSubData( BufferTarget.UniformBuffer, (IntPtr)_uniformInfo.Offsets[3], 
+                              (IntPtr)(16 * sizeof(float)), ref _projMatrix );
+            
+            GL.BindBuffer( BufferTarget.UniformBuffer, 0 );
+        }
 
-            //Draw one cube
-            GL.DrawArrays(PrimitiveType.Triangles, 0, 36);
+        //-----------------------------------------------------------------------------------------
+        protected override void OnResize( EventArgs e )
+        {
+            GL.Viewport( ClientRectangle.X, ClientRectangle.Y, 
+                         ClientRectangle.Width, ClientRectangle.Height );
+            float aspect = (float)Width / (float)Height;
+            _projMatrix = Matrix4.CreatePerspectiveFieldOfView( MathHelper.DegreesToRadians(50.0f), 
+                                                                aspect, 0.1f, 1000.0f );
+        }
+
+        //-----------------------------------------------------------------------------------------
+        protected override void OnUnload( EventArgs e )
+        {
+            GL.DeleteProgram( _shaderProgramName );
+            GL.DeleteBuffers( Buffers.Count(), Buffers.Names );
+            GL.DeleteVertexArrays( 1, ref _vertexArrayName );
+        }
+        
+        //-----------------------------------------------------------------------------------------
+        protected override void OnLoad( EventArgs e )
+        {
+            this._InitProgram();
+            this._InitBuffers();             /* note: this has to come before _InitVao() */
+            this._InitVao();
+            this._InitUniforms();
+            
+            GL.Enable( EnableCap.CullFace );
+            GL.FrontFace( FrontFaceDirection.Cw );
+        }
+
+        //-----------------------------------------------------------------------------------------
+        protected override void OnRenderFrame( FrameEventArgs e )
+        {
+            // Clear the window with given color
+            GL.ClearBuffer( ClearBuffer.Color, 0, Statics.colorGreen );
+ 
+            // Use the program object we created earlier for rendering
+            GL.UseProgram( _shaderProgramName );
+
+            // Tell OpenGL to draw outlines only
+            //GL.PolygonMode( MaterialFace.FrontAndBack, PolygonMode.Line );
+
+            this._UpdateUniforms( (float) Program.ElapsedTimeSeconds );
+
+            // Draw one cube
+            GL.DrawArrays( PrimitiveType.Triangles, 0, 36 );
             
             SwapBuffers();
         }

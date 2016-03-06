@@ -59,9 +59,10 @@
     <Compile Include="Example_05L01_05L05\Example_05L01_05L05.cs" />
     <Compile Include="Example_05L06_05L07\Example_05L06_05L07.cs" />
     <Compile Include="Example_05L08\Example_05L08.cs" />
+    <Compile Include="Example_05L09_05L17B\Example_05L09_05L17B.cs" />
     <Compile Include="Example_05L20_05L25\Example_05L20_05L25.cs" />
     <Compile Include="Example_05L26\Example_05L26.cs" />
-    <Compile Include="Example_05L09_05L17\Example_05L09_05L17.cs" />
+    <Compile Include="Example_05L09_05L17A\Example_05L09_05L17A.cs" />
     <Compile Include="Example_05L27_05L28\Example_05L27_05L28.cs" />
     <Compile Include="Example_05L29_05L32\Example_05L29_05L32.cs" />
     <Compile Include="BasicAtomicCounters\BasicAtomicCounters.cs" />
