@@ -4,6 +4,8 @@ using System.Diagnostics;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 
+using Gnu.Getopt;
+
 namespace SB6_CSharp
 {
     //=============================================================================================
@@ -21,12 +23,37 @@ namespace SB6_CSharp
             get { return _counter.ElapsedMilliseconds / 1000.0; } 
         }
 
+        private static string _basePath = @".\";
+        public static string BasePath { get { return _basePath; } }
+
+        //-----------------------------------------------------------------------------------------
+        private static void _ParseOptions( ref string[] args )
+        {
+            int c;
+            Getopt g = new Getopt( System.AppDomain.CurrentDomain.FriendlyName, args, "b:" );
+            while( (c = g.getopt()) != -1 )
+            {
+                switch( c )
+                {
+                    case 'b':
+                        _basePath = g.Optarg;
+                        break;
+                    
+                    default:
+                        Console.WriteLine( "getopt() returned unknown option '" + c + "'" );
+                        break;
+                }
+            }
+        }
+
         //-----------------------------------------------------------------------------------------
         static void Main(string[] args)
         {
             // Initialize OpenTK and make sure it's 'Disposed' of properly.
             using( Toolkit.Init() )
             {
+                _ParseOptions( ref args );
+
                 //     **************************************************
                 //     *** Just uncomment the example you wish to run ***
                 //     **************************************************
@@ -53,7 +80,10 @@ namespace SB6_CSharp
                 //using( var example = new Example_05L20_05L25() )
                 //using( var example = new Example_05L26() )
                 //using( var example = new Example_05L27_05L28() )
-                using( var example = new Example_05L29_05L32() )
+                //using( var example = new Example_05L29_05L32() )
+                //using( var example = new Example_05L33_05L35() )
+                //using( var example = new Example_05L36_05L37() )
+                using( var example = new Example_05L38_05L39() )
                 {
                     string strVersion = GL.GetString( StringName.Version );
                     Console.WriteLine( strVersion );

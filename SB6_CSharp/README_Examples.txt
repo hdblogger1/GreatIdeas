@@ -3,18 +3,18 @@
 +-------------------------------------------------------------------------------------------------+
 [CHAPTER 1]
 ---------------------------------------------------------------------------------------------------
-    {NO EXAMPLE GIVEN}
+    {NO EXAMPLES GIVEN}
 ---------------------------------------------------------------------------------------------------
 [CHAPTER 2]
 ---------------------------------------------------------------------------------------------------
-'simpleclear          | Listing 2.1
+'simpleclear          | Listing 2.1            | Simple Clear
   {CSharp Only}       | Listing 2.3
-'singlepoint          | Listing 2.3-2.7
-  {CSharp Only}       | Listing 2.8-2.9
+'singlepoint          | Listing 2.3-2.7        | Single Point
+singletri*            | Listing 2.8-2.9        | Single Triangle
 ---------------------------------------------------------------------------------------------------
 [CHAPTER 3]
 ---------------------------------------------------------------------------------------------------
-'movingtri            | Listing 3.1-3.2
+'movingtri            | Listing 3.1-3.2        | Moving Triangle
   {CSharp Only}       | Listing 3.3-3.4
   {CSharp Only}       | Listing 3.5-3.6
 'tessellatedtri       | Listing 3.7-3.8
@@ -24,7 +24,7 @@
 ---------------------------------------------------------------------------------------------------
 [CHAPTER 4]
 ---------------------------------------------------------------------------------------------------
-    {NO EXAMPLE GIVEN}
+    {NO EXAMPLES GIVEN}
 ---------------------------------------------------------------------------------------------------
 [CHAPTER 5]
 ---------------------------------------------------------------------------------------------------
@@ -35,17 +35,18 @@
   {CSharp Only}       | Listing 5.9-5.17 (B)   | Standard
 'spinnycube           | Listing 5.20-5.25,5.26 |
   {CSharp Only}       | Listing 5.27-5.28      |
-  {CSharp Only}       | Listing 5.29-5.32      |
+  {CSharp Only}       | Listing 5.29-5.32      | Atomic Counters
+simpletexture         | Listing 5.33-5.35
+ktxview               | Listing 5.36-5.37      | Simple KTX viewer
+'simpletexcoords      | Listing 5.38-5.39      | Texture Coordinates
 
 
 tunnel*               | Figure 5.9: A tunnel rendered with three textures and mipmapping
 wrapmodes             | Figure 5.10: Example of texture coordinate wrapping modes
-singletri*            | Listing 5.35: Reading from a texture in GLSL
-simpletexture         | Figure 5.36
+
 
     {start using shader/ktx loaders}
                               
-'simpletexcoords      | Listing 5.38-5.39
 alienrain*            | Listing 5.41 - 5.43: Rendering loop for the alien rain sample
 'fragmentlist         | Listing 5.45-5.46
 ---------------------------------------------------------------------------------------------------
@@ -106,7 +107,7 @@ flocking              | ?Listing 10.10?: Flocking algorithm
 ---------------------------------------------------------------------------------------------------
 [CHAPTER 11]
 ---------------------------------------------------------------------------------------------------
-    {NO EXAMPLE GIVEN}
+    {NO EXAMPLES GIVEN}
 ---------------------------------------------------------------------------------------------------
 [CHAPTER 12]
 ---------------------------------------------------------------------------------------------------
@@ -130,6 +131,5 @@ raytracer*            | Listing 12.38: Ray-plane intersection test
 [EXTRAS]
 ---------------------------------------------------------------------------------------------------
   {CSharp Only}       | BasicAtomicCounters: Basic atomic counters
-ktxview               | The KTX Viewer Utility
 sb6mrender            | ?????
 tessellatedcube       | ?????

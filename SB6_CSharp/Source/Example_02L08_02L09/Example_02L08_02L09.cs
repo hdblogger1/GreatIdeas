@@ -28,7 +28,7 @@ namespace SB6_CSharp
 
         //-----------------------------------------------------------------------------------------
         public Example_02L08_02L09() 
-            : base( 800, 600, GraphicsMode.Default, "OpenGL SuperBible - Listings 2.8 thru 2.9 ", 
+            : base( 800, 600, GraphicsMode.Default, "OpenGL SuperBible - Single Triangle", 
                     0, DisplayDevice.Default, 4, 3, GraphicsContextFlags.Default )
         {
         }

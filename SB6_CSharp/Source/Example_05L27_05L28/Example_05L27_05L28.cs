@@ -31,7 +31,9 @@ namespace SB6_CSharp
         private int _shaderStorageBufferName;
         private int _uniformLocation;
 
-        Matrix4 _projMatrix;
+        private Matrix4 _projMatrix;
+        private Matrix4 _transformMatrix;
+
 
         //-----------------------------------------------------------------------------------------
         public Example_05L27_05L28() 
@@ -191,24 +193,20 @@ namespace SB6_CSharp
         //-----------------------------------------------------------------------------------------
         private void _UpdateTransform()
         {
-            Matrix4 transformMatrix;
             float elapsedSeconds = (float)Program.ElapsedTimeSeconds;
 
             float f = elapsedSeconds * 0.3f;
 
-            transformMatrix = Matrix4.CreateFromAxisAngle( new Vector3( 1.0f, 0.0f, 0.0f ), 
-                                                           elapsedSeconds * MathHelper.DegreesToRadians( 81.0f ) );
-            transformMatrix *= Matrix4.CreateFromAxisAngle( new Vector3( 0.0f, 1.0f, 0.0f ), 
-                                                            elapsedSeconds * MathHelper.DegreesToRadians( 45.0f ) );
-            transformMatrix *= Matrix4.CreateTranslation( (float)(Math.Sin( 2.1f * f ) * 0.5f), 
-                                                   (float)(Math.Cos( 1.7f * f ) * 0.5f),
-                                                   (float)(Math.Sin( 1.3f * f ) * Math.Cos( 1.5f * f ) * 2.0f) );
-            transformMatrix *= Matrix4.CreateTranslation( 0.0f, 0.0f, -4.0f );
-            transformMatrix *= Matrix4.CreateScale( 1.0f, 1.0f, 1.0f );
-            transformMatrix *= _projMatrix;
-
-            // Set the transformation matrix
-            GL.UniformMatrix4( _uniformLocation, false, ref transformMatrix );
+            _transformMatrix = Matrix4.CreateFromAxisAngle( new Vector3( 1.0f, 0.0f, 0.0f ), 
+                                                            elapsedSeconds * MathHelper.DegreesToRadians( 81.0f ) );
+            _transformMatrix *= Matrix4.CreateFromAxisAngle( new Vector3( 0.0f, 1.0f, 0.0f ), 
+                                                             elapsedSeconds * MathHelper.DegreesToRadians( 45.0f ) );
+            _transformMatrix *= Matrix4.CreateTranslation( (float)(Math.Sin( 2.1f * f ) * 0.5f), 
+                                                           (float)(Math.Cos( 1.7f * f ) * 0.5f),
+                                                           (float)(Math.Sin( 1.3f * f ) * Math.Cos( 1.5f * f ) * 2.0f) );
+            _transformMatrix *= Matrix4.CreateTranslation( 0.0f, 0.0f, -4.0f );
+            _transformMatrix *= Matrix4.CreateScale( 1.0f, 1.0f, 1.0f );
+            _transformMatrix *= _projMatrix;
         }
 
         //-----------------------------------------------------------------------------------------
@@ -247,10 +245,13 @@ namespace SB6_CSharp
             // Clear the window with given color
             GL.ClearBuffer( ClearBuffer.Color, 0, Statics.colorGreen );
 
+            this._UpdateTransform();
+
             // Use the program object we created earlier for rendering
             GL.UseProgram( _shaderProgramName );
-
-            this._UpdateTransform();
+            
+            // Set the transformation matrix for current program object
+            GL.UniformMatrix4( _uniformLocation, false, ref _transformMatrix );
 
             //GL.PolygonMode( MaterialFace.FrontAndBack, PolygonMode.Line );
 

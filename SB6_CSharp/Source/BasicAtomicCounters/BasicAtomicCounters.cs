@@ -182,6 +182,7 @@ namespace SB6_CSharp
             uint data = 0;
             GL.BindBuffer( BufferTarget.AtomicCounterBuffer, Buffers.Name( Buffers.Type.ATOMIC_COUNTER ) );
             GL.BufferSubData( BufferTarget.AtomicCounterBuffer, IntPtr.Zero, (IntPtr)sizeof(uint), ref data );
+            GL.BindBuffer( BufferTarget.AtomicCounterBuffer, 0 );
  
             // Use the program object we created earlier for rendering
             GL.UseProgram( _shaderProgramName );
