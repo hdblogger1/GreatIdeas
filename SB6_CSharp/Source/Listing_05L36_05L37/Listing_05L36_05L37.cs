@@ -14,7 +14,7 @@ namespace SB6_CSharp
     /// Our OpenTK GameWindow derived application class which takes care of creating a window, 
     /// handling input, and displaying the rendered results to the user.
     /// </summary>
-    class Example_05L36_05L37 : GameWindow
+    class Listing_05L36_05L37 : GameWindow
     {
         //-----------------------------------------------------------------------------------------
         /// <summary>
@@ -31,7 +31,7 @@ namespace SB6_CSharp
         private uint _textureName;
 
         //-----------------------------------------------------------------------------------------
-        public Example_05L36_05L37() 
+        public Listing_05L36_05L37() 
             : base( 800, 600, GraphicsMode.Default, "OpenGL SuperBible - Texture Coordinates", 
                     0, DisplayDevice.Default, 4, 3, GraphicsContextFlags.Default )
         {

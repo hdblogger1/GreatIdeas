@@ -45,30 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Example_02L01\Example_02L01.cs" />
-    <Compile Include="Example_02L02\Example_02L02.cs" />
-    <Compile Include="Example_02L03_02L07\Example_02L03_02L07.cs" />
-    <Compile Include="Example_02L08_02L09\Example_02L08_02L09.cs" />
-    <Compile Include="Example_03L01_03L02\Example_03L01_03L02.cs" />
-    <Compile Include="Example_03L03_03L04\Example_03L03_03L04.cs" />
-    <Compile Include="Example_03L05_03L06\Example_03L05_03L06.cs" />
-    <Compile Include="Example_03L07_03L08\Example_03L07_03L08.cs" />
-    <Compile Include="Example_03L09\Example_03L09.cs" />
-    <Compile Include="Example_03L10\Example_03L10.cs" />
-    <Compile Include="Example_03L11_03L12\Example_03L11_03L12.cs" />
-    <Compile Include="Example_05L01_05L05\Example_05L01_05L05.cs" />
-    <Compile Include="Example_05L06_05L07\Example_05L06_05L07.cs" />
-    <Compile Include="Example_05L08\Example_05L08.cs" />
-    <Compile Include="Example_05L09_05L17B\Example_05L09_05L17B.cs" />
-    <Compile Include="Example_05L20_05L25\Example_05L20_05L25.cs" />
-    <Compile Include="Example_05L26\Example_05L26.cs" />
-    <Compile Include="Example_05L09_05L17A\Example_05L09_05L17A.cs" />
-    <Compile Include="Example_05L27_05L28\Example_05L27_05L28.cs" />
-    <Compile Include="Example_05L29_05L32\Example_05L29_05L32.cs" />
     <Compile Include="Extra_BasicAtomicCounters\BasicAtomicCounters.cs" />
-    <Compile Include="Example_05L33_05L35\Example_05L33_05L35.cs" />
-    <Compile Include="Example_05L36_05L37\Example_05L36_05L37.cs" />
-    <Compile Include="Example_05L38_05L39\Example_05L38_05L39.cs" />
     <Compile Include="Extra_WrapModes\WrapModes.cs" />
     <Compile Include="Framework\KTX.cs" />
     <Compile Include="Framework\SB6Model.cs">
@@ -77,6 +54,29 @@
     <Compile Include="Framework\SB6Debug.cs" />
     <Compile Include="Framework\TypeUtils.cs" />
     <Compile Include="Getopt.cs" />
+    <Compile Include="Listing_02L01\Listing_02L01.cs" />
+    <Compile Include="Listing_02L02\Listing_02L02.cs" />
+    <Compile Include="Listing_02L03_02L07\Listing_02L03_02L07.cs" />
+    <Compile Include="Listing_02L08_02L09\Listing_02L08_02L09.cs" />
+    <Compile Include="Listing_03L01_03L02\Listing_03L01_03L02.cs" />
+    <Compile Include="Listing_03L03_03L04\Listing_03L03_03L04.cs" />
+    <Compile Include="Listing_03L05_03L06\Listing_03L05_03L06.cs" />
+    <Compile Include="Listing_03L07_03L08\Listing_03L07_03L08.cs" />
+    <Compile Include="Listing_03L09\Listing_03L09.cs" />
+    <Compile Include="Listing_03L10\Listing_03L10.cs" />
+    <Compile Include="Listing_03L11_03L12\Listing_03L11_03L12.cs" />
+    <Compile Include="Listing_05L01_05L05\Listing_05L01_05L05.cs" />
+    <Compile Include="Listing_05L06_05L07\Listing_05L06_05L07.cs" />
+    <Compile Include="Listing_05L08\Listing_05L08.cs" />
+    <Compile Include="Listing_05L09_05L17A\Listing_05L09_05L17A.cs" />
+    <Compile Include="Listing_05L09_05L17B\Listing_05L09_05L17B.cs" />
+    <Compile Include="Listing_05L20_05L25\Listing_05L20_05L25.cs" />
+    <Compile Include="Listing_05L26\Listing_05L26.cs" />
+    <Compile Include="Listing_05L27_05L28\Listing_05L27_05L28.cs" />
+    <Compile Include="Listing_05L29_05L32\Listing_05L29_05L32.cs" />
+    <Compile Include="Listing_05L33_05L35\Listing_05L33_05L35.cs" />
+    <Compile Include="Listing_05L36_05L37\Listing_05L36_05L37.cs" />
+    <Compile Include="Listing_05L38_05L39\Listing_05L38_05L39.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Framework\Shader.cs" />
@@ -90,14 +90,14 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Example_05L38_05L39\render.fs.glsl" />
-    <None Include="Example_05L38_05L39\render.vs.glsl" />
     <None Include="Extra_SBM6ModelRenderer\render.fs.glsl" />
     <None Include="Extra_SBM6ModelRenderer\render.vs.glsl" />
     <None Include="Extra_Tunnel\render.fs.glsl" />
     <None Include="Extra_Tunnel\render.vs.glsl" />
     <None Include="Extra_WrapModes\render.fs.glsl" />
     <None Include="Extra_WrapModes\render.vs.glsl" />
+    <None Include="Listing_05L38_05L39\render.fs.glsl" />
+    <None Include="Listing_05L38_05L39\render.vs.glsl" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

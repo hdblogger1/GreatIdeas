@@ -12,7 +12,7 @@ namespace SB6_CSharp
     /// Our OpenTK GameWindow derived application class which takes care of creating a window, 
     /// handling input, and displaying the rendered results to the user.
     /// </summary>
-    class Example_05L38_05L39 : GameWindow
+    class Listing_05L38_05L39 : GameWindow
     {
         //-----------------------------------------------------------------------------------------
         /// <summary>
@@ -68,7 +68,7 @@ namespace SB6_CSharp
         private Framework.SBM6Model _model;
 
         //-----------------------------------------------------------------------------------------
-        public Example_05L38_05L39() 
+        public Listing_05L38_05L39() 
             : base( 800, 600, GraphicsMode.Default, "OpenGL SuperBible - Texture Coordinates", 
                     0, DisplayDevice.Default, 4, 3, GraphicsContextFlags.Default )
         {
@@ -79,9 +79,9 @@ namespace SB6_CSharp
         {
             uint[] shaders = new uint[2];
                 
-            shaders[0] = Framework.Shader.Load( Program.BasePath + @"Source\Example_05L38_05L39\render.vs.glsl", 
+            shaders[0] = Framework.Shader.Load( Program.BasePath + @"Source\Listing_05L38_05L39\render.vs.glsl", 
                                                 ShaderType.VertexShader );
-            shaders[1] = Framework.Shader.Load( Program.BasePath + @"Source\Example_05L38_05L39\render.fs.glsl", 
+            shaders[1] = Framework.Shader.Load( Program.BasePath + @"Source\Listing_05L38_05L39\render.fs.glsl", 
                                                 ShaderType.FragmentShader );
 
             _shaderPrograms.Name = Framework.Shader.Link( shaders, shaders.Length );

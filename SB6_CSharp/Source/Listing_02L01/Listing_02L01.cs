@@ -11,7 +11,7 @@ namespace SB6_CSharp
     /// Our OpenTK GameWindow derived application class which takes care of creating a window, 
     /// handling input, and displaying the rendered results to the user.
     /// </summary>
-    class Example_02L01 : GameWindow
+    class Listing_02L01 : GameWindow
     {        
         //-----------------------------------------------------------------------------------------
         /// <summary>
@@ -26,7 +26,7 @@ namespace SB6_CSharp
         /// <summary>
         /// A constructor requesting an OpenGL 4.3 Core context
         /// </summary>
-        public Example_02L01() 
+        public Listing_02L01() 
             : base( 800, 600,                            // 800 x 600 window
                     GraphicsMode.Default, 
                     "OpenGL SuperBible - Simple Clear",  // window title

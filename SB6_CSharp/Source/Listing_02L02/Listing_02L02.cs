@@ -12,10 +12,10 @@ namespace SB6_CSharp
     /// Our OpenTK GameWindow derived application class which takes care of creating a window, 
     /// handling input, and displaying the rendered results to the user.
     /// </summary>
-    class Example_02L02 : GameWindow
+    class Listing_02L02 : GameWindow
     {
         //-----------------------------------------------------------------------------------------
-        public Example_02L02() 
+        public Listing_02L02() 
             : base( 800, 600, GraphicsMode.Default, "OpenGL SuperBible - Listing 2.2",
                     0, DisplayDevice.Default, 4, 3, GraphicsContextFlags.Default )
         {
