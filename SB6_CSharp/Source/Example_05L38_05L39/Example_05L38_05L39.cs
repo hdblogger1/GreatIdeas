@@ -5,8 +5,6 @@ using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 
-using SB6_CSharp.Framework;
-
 namespace SB6_CSharp
 {
     //=============================================================================================

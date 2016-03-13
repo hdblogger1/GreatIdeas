@@ -44,12 +44,6 @@ ktxview               | Listing 5.36-5.37      | Simple KTX viewer
 'simpletexcoords      | Listing 5.38-5.39      | Texture Coordinates
 
 
-tunnel*               | Figure 5.9: A tunnel rendered with three textures and mipmapping
-wrapmodes             | Figure 5.10: Example of texture coordinate wrapping modes
-
-
-    {start using shader/ktx loaders}
-                              
 alienrain*            | Listing 5.41 - 5.43: Rendering loop for the alien rain sample
 'fragmentlist         | Listing 5.45-5.46
 ---------------------------------------------------------------------------------------------------
@@ -135,4 +129,6 @@ raytracer*            | Listing 12.38: Ray-plane intersection test
 ---------------------------------------------------------------------------------------------------
   {CSharp Only}       | BasicAtomicCounters    | Basic atomic counters
 sb6mrender            | SBM6ModelRenderer      | Simple render for SBM6 model files (arcball still needs implementing)
+tunnel*               | Tunnel                 | Figure 5.9: A tunnel rendered with three textures and mipmapping
+wrapmodes             | WrapModes              | Figure 5.10: Example of texture coordinate wrapping modes
 tessellatedcube       | ?????

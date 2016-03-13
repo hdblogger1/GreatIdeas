@@ -60,8 +60,6 @@ namespace SB6_CSharp
                 
                 // Initialize our Example window and make sure it's 'Disposed' of properly.
 
-                //using( var example = new BasicAtomicCounters() )
-                using( var example = new SBM6ModelRenderer() )
                 //using( var example = new Example_02L01() )
                 //using( var example = new Example_02L02() )
                 //using( var example = new Example_02L03_02L07() )
@@ -85,6 +83,10 @@ namespace SB6_CSharp
                 //using( var example = new Example_05L33_05L35() )
                 //using( var example = new Example_05L36_05L37() )
                 //using( var example = new Example_05L38_05L39() )
+                //using( var example = new BasicAtomicCounters() )
+                //using( var example = new SBM6ModelRenderer() )
+                //using( var example = new Tunnel() )
+                using( var example = new WrapModes() )
                 {
                     string strVersion = GL.GetString( StringName.Version );
                     Console.WriteLine( strVersion );
