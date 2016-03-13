@@ -69,12 +69,17 @@
     <Compile Include="Example_05L33_05L35\Example_05L33_05L35.cs" />
     <Compile Include="Example_05L36_05L37\Example_05L36_05L37.cs" />
     <Compile Include="Example_05L38_05L39\Example_05L38_05L39.cs" />
-    <Compile Include="Framework\GLObject.cs" />
-    <Compile Include="Framework\KhronosTextureFormat.cs" />
+    <Compile Include="Framework\KTX.cs" />
+    <Compile Include="Framework\SB6Model.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Framework\Debug.cs" />
+    <Compile Include="Framework\TypeUtils.cs" />
     <Compile Include="Getopt.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Framework\Shader.cs" />
+    <Compile Include="SBM6ModelRenderer\SBM6ModelRenderer.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Local\opentk-2014-07-23\Source\OpenTK\OpenTK.csproj">
@@ -85,6 +90,8 @@
   <ItemGroup>
     <None Include="Example_05L38_05L39\render.fs.glsl" />
     <None Include="Example_05L38_05L39\render.vs.glsl" />
+    <None Include="SBM6ModelRenderer\render.fs.glsl" />
+    <None Include="SBM6ModelRenderer\render.vs.glsl" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

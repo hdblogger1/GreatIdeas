@@ -1,3 +1,6 @@
+https://github.com/openglsuperbible
+
+
 +-------------------------------------------------------------------------------------------------+
 | SuperBible Example  |   SB6_CSharp Example   |  Description                                     |
 +-------------------------------------------------------------------------------------------------+
@@ -130,6 +133,6 @@ raytracer*            | Listing 12.38: Ray-plane intersection test
 ---------------------------------------------------------------------------------------------------
 [EXTRAS]
 ---------------------------------------------------------------------------------------------------
-  {CSharp Only}       | BasicAtomicCounters: Basic atomic counters
-sb6mrender            | ?????
+  {CSharp Only}       | BasicAtomicCounters    | Basic atomic counters
+sb6mrender            | SBM6ModelRenderer      | Simple render for SBM6 model files (arcball still needs implementing)
 tessellatedcube       | ?????

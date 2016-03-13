@@ -14,7 +14,7 @@ namespace SB6_CSharp
     /// Our OpenTK GameWindow derived application class which takes care of creating a window, 
     /// handling input, and displaying the rendered results to the user.
     /// </summary>
-    class Example_05L36_05L37 : GameWindow
+    class Example_05L38_05L39 : GameWindow
     {
         //-----------------------------------------------------------------------------------------
         /// <summary>
@@ -23,16 +23,55 @@ namespace SB6_CSharp
         static class Statics
         {
             public static readonly float[] colorGreen = { 0.0f, 0.2f, 0.0f, 1.0f };
+            public static readonly float[] one = { 1.0f };
+            private static uint B = 0x00000000;
+            private static uint W = 0xFFFFFFFF;
+            public static readonly uint[] textureData = 
+            {
+                B, W, B, W, B, W, B, W, B, W, B, W, B, W, B, W,
+                W, B, W, B, W, B, W, B, W, B, W, B, W, B, W, B,
+                B, W, B, W, B, W, B, W, B, W, B, W, B, W, B, W,
+                W, B, W, B, W, B, W, B, W, B, W, B, W, B, W, B,
+                B, W, B, W, B, W, B, W, B, W, B, W, B, W, B, W,
+                W, B, W, B, W, B, W, B, W, B, W, B, W, B, W, B,
+                B, W, B, W, B, W, B, W, B, W, B, W, B, W, B, W,
+                W, B, W, B, W, B, W, B, W, B, W, B, W, B, W, B,
+                B, W, B, W, B, W, B, W, B, W, B, W, B, W, B, W,
+                W, B, W, B, W, B, W, B, W, B, W, B, W, B, W, B,
+                B, W, B, W, B, W, B, W, B, W, B, W, B, W, B, W,
+                W, B, W, B, W, B, W, B, W, B, W, B, W, B, W, B,
+                B, W, B, W, B, W, B, W, B, W, B, W, B, W, B, W,
+                W, B, W, B, W, B, W, B, W, B, W, B, W, B, W, B,
+                B, W, B, W, B, W, B, W, B, W, B, W, B, W, B, W,
+                W, B, W, B, W, B, W, B, W, B, W, B, W, B, W, B,
+            };
         }
 
-        private int _shaderProgramName;
-        private int _vertexArrayName;
+        private struct ShaderPrograms
+        {
+            public uint Name;
+        }
+        private ShaderPrograms _shaderPrograms;
 
-        private int _textureName;
+        private struct Uniforms
+        {
+            public int MVLocation;
+            public int ProjLocation;
+        }
+        private Uniforms _uniforms;
+
+        private struct Textures
+        {
+            public uint[] Array;
+        }
+        private Textures _textures;
+        private int _textureIndex = 0;
+
+        private Framework.SBM6Model _model;
 
         //-----------------------------------------------------------------------------------------
-        public Example_05L36_05L37() 
-            : base( 800, 600, GraphicsMode.Default, "OpenGL SuperBible - Simple KTX viewer", 
+        public Example_05L38_05L39() 
+            : base( 800, 600, GraphicsMode.Default, "OpenGL SuperBible - Texture Coordinates", 
                     0, DisplayDevice.Default, 4, 3, GraphicsContextFlags.Default )
         {
         }
@@ -40,118 +79,109 @@ namespace SB6_CSharp
         //-----------------------------------------------------------------------------------------
         private bool _InitProgram()
         {
-            int vertexShaderName, fragmentShaderName;
+            uint[] shaders = new uint[2];
                 
-            // Source code for vertex shader
-            string vertexShaderSource = @"
-                #version 430 core
+            shaders[0] = Framework.Shader.Load( Program.BasePath + @"Source\Example_05L38_05L39\render.vs.glsl", 
+                                                ShaderType.VertexShader );
+            shaders[1] = Framework.Shader.Load( Program.BasePath + @"Source\Example_05L38_05L39\render.fs.glsl", 
+                                                ShaderType.FragmentShader );
 
-                void main(void)
-                {
-                    const vec4 vertices[] = vec4[](vec4(-1.0, -1.0, 0.5, 1.0),
-                                                   vec4( 1.0, -1.0, 0.5, 1.0),
-                                                   vec4(-1.0,  1.0, 0.5, 1.0),
-                                                   vec4( 1.0,  1.0, 0.5, 1.0));
-                    gl_Position = vertices[gl_VertexID];
-                }
-                ";
-                
-            // Source code for fragment shader
-            string fragmentShaderSource = @"
-                #version 430 core
+            _shaderPrograms.Name = Framework.Shader.Link( shaders, shaders.Length );
 
-                uniform sampler2D s;
-                uniform float     exposure;
+            // Get uniform locations
+            _uniforms.MVLocation   = GL.GetUniformLocation( _shaderPrograms.Name, "mv_matrix" );
+            _uniforms.ProjLocation = GL.GetUniformLocation( _shaderPrograms.Name, "proj_matrix" );
 
-                out vec4 color;
+            return true;
+        }
+ 
+        //-----------------------------------------------------------------------------------------
+        private void _InitTextures()
+        {
+            _textures.Array = new uint[2];
 
-                void main(void)
-                {
-                    color = texture(s, gl_FragCoord.xy / textureSize(s, 0)) * exposure;
-                }
-                ";
+            // Generate a name for texture #1 and manually create it
+            GL.GenTextures( 1, out _textures.Array[0] );
+            GL.BindTexture( TextureTarget.Texture2D, _textures.Array[0] );
+            GL.TexStorage2D( TextureTarget2d.Texture2D, 1, SizedInternalFormat.Rgba8, 16, 16 );
+            GL.TexSubImage2D( TextureTarget.Texture2D, 0, 0, 0, 16, 16, PixelFormat.Rgba, 
+                              PixelType.UnsignedByte, Statics.textureData );
+            int nearestFilter = (int)TextureMinFilter.Nearest;
+            GL.TexParameterI( TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, ref nearestFilter );
+            GL.TexParameterI( TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, ref nearestFilter );
 
-            // Create and compile vertex shader
-            vertexShaderName = GL.CreateShader( ShaderType.VertexShader );
-            GL.ShaderSource( vertexShaderName, vertexShaderSource );
-            GL.CompileShader( vertexShaderName );
+            // Load texture #2 from file
+            Framework.KTX.Load( Program.BasePath + @"Media\Textures\pattern1.ktx", ref _textures.Array[1] );
 
-            // Create and compile fragment shader
-            fragmentShaderName = GL.CreateShader( ShaderType.FragmentShader );
-            GL.ShaderSource( fragmentShaderName, fragmentShaderSource );
-            GL.CompileShader( fragmentShaderName );
+//            GL.GenTextures( 1, out _textures.Array[0] );
+//            GL.BindTexture( TextureTarget.Texture2D, _textures.Array[0] );
+//            GL.TexStorage2D( TextureTarget2d.Texture2D, 1, SizedInternalFormat.Rgba8, 0x400, 0x400 );
+//            GL.TexSubImage2D( TextureTarget.Texture2D, 0, 0, 0, 0x400, 0x400, PixelFormat.Bgra, 
+//                              PixelType.UnsignedByte, SB6Debug.ByteArrayFromOutput() );
 
-            // Create program, attach shaders to it, and link it
-            _shaderProgramName = GL.CreateProgram();
-            GL.AttachShader( _shaderProgramName, vertexShaderName );
-            Console.WriteLine( GL.GetShaderInfoLog( vertexShaderName ) );
-            GL.AttachShader( _shaderProgramName, fragmentShaderName );
-            Console.WriteLine( GL.GetShaderInfoLog( fragmentShaderName ) );
-            GL.LinkProgram( _shaderProgramName );
+        }
 
-            // Delete the shaders as the program has them now
-            GL.DeleteShader( vertexShaderName );
-            GL.DeleteShader( fragmentShaderName );
-
+        //-----------------------------------------------------------------------------------------
+        private bool _InitModels()
+        {
+            _model = new Framework.SBM6Model();
+            _model.Load( Program.BasePath + @"Media\Objects\torus_nrms_tc.sbm" );
             return true;
         }
         
         //-----------------------------------------------------------------------------------------
-        private bool _InitVao()
-        {
-            // Create VAO object to hold vertex shader inputs and attach it to our context. As 
-            // OpenGL requires the VAO object (whether or not it's used) we do this here.
-            GL.GenVertexArrays( 1, out _vertexArrayName );
-            GL.BindVertexArray( _vertexArrayName );
-            
-            return true;
-        }
-
-        //-----------------------------------------------------------------------------------------
-        private void _InitTextures()
-        {
-            // Generate a name for the texture
-            GL.GenTextures( 1, out _textureName );
-
-            // Load texture from file
-            // Note: If debugging from Visual Studio, debug command line options must be set to:
-            //   -b "..\..\..\\"
-            Framework.KTX.Load( Program.BasePath + @"Media\Textures\Tree.ktx", (uint)_textureName );
-
-            // Now bind it to the context using the GL_TEXTURE_2D binding point
-            GL.BindTexture( TextureTarget.Texture2D, _textureName );
-        }
-
-        //-----------------------------------------------------------------------------------------
         protected override void OnLoad( EventArgs e )
         {
             this._InitProgram();
+            this._InitModels();
             this._InitTextures();
-            this._InitVao();
+
+            GL.Enable( EnableCap.DepthTest );
+            GL.DepthFunc( DepthFunction.Lequal );
         }
 
         //-----------------------------------------------------------------------------------------
         protected override void OnUnload( EventArgs e )
         {
-            GL.DeleteProgram( _shaderProgramName );
-            GL.DeleteVertexArrays( 1, ref _vertexArrayName );
-            GL.DeleteTextures( 1, ref _textureName );
+            GL.DeleteProgram( _shaderPrograms.Name );
+            GL.DeleteTextures( 2, _textures.Array );
+        }
+
+        //-----------------------------------------------------------------------------------------
+        protected override void OnKeyPress( OpenTK.KeyPressEventArgs e )
+        {
+            if (e.KeyChar == 't' || e.KeyChar == 'T')
+            {
+                _textureIndex++;
+                if( _textureIndex > 1 ) { _textureIndex = 0; }
+            }
         }
         
         //-----------------------------------------------------------------------------------------
-        //Our rendering function
         protected override void OnRenderFrame( FrameEventArgs e )
         {
-            //Clear the window with given color
+            float currentTime = (float)Program.ElapsedTimeSeconds;
+
+            GL.Viewport( 0, 0, Width, Height );
+            GL.ClearBuffer( ClearBuffer.Depth, 0, Statics.one );
             GL.ClearBuffer( ClearBuffer.Color, 0, Statics.colorGreen );
- 
-            //Use the program object we created earlier for rendering
-            GL.UseProgram( _shaderProgramName );
 
-            GL.Uniform1( 0, (float)(Math.Sin( Program.ElapsedTimeSeconds ) * 16.0 + 16.0) );
+            GL.BindTexture( TextureTarget.Texture2D, _textures.Array[_textureIndex] );
 
-            //Draw one triangle
-            GL.DrawArrays( PrimitiveType.TriangleStrip, 0, 4 );
+            GL.UseProgram( _shaderPrograms.Name );
+
+            Matrix4 projMatrix = Matrix4.CreatePerspectiveFieldOfView( MathHelper.DegreesToRadians( 60.0f ), 
+                                                                       Width / Height, 0.1f, 1000.0f );
+            Matrix4 mvMatrix = Matrix4.CreateFromAxisAngle( new Vector3( 0.0f, 0.0f, 1.0f), 
+                                                              MathHelper.DegreesToRadians( (float)currentTime * 21.1f) )
+                               * Matrix4.CreateFromAxisAngle( new Vector3( 0.0f, 1.0f, 0.0f), 
+                                                              MathHelper.DegreesToRadians( (float)currentTime * 19.3f) )
+                               * Matrix4.CreateTranslation( 0.0f, 0.0f, -3.0f );
+            
+            GL.UniformMatrix4( _uniforms.ProjLocation, false, ref projMatrix );
+            GL.UniformMatrix4( _uniforms.MVLocation, false, ref mvMatrix );
+
+            _model.Render();
             
             SwapBuffers();
         }

@@ -14,7 +14,7 @@ namespace SB6_CSharp
     /// Our OpenTK GameWindow derived application class which takes care of creating a window, 
     /// handling input, and displaying the rendered results to the user.
     /// </summary>
-    class Example_05L38_05L39 : GameWindow
+    class Example_05L36_05L37 : GameWindow
     {
         //-----------------------------------------------------------------------------------------
         /// <summary>
@@ -28,10 +28,10 @@ namespace SB6_CSharp
         private int _shaderProgramName;
         private int _vertexArrayName;
 
-        private int _textureName;
+        private uint _textureName;
 
         //-----------------------------------------------------------------------------------------
-        public Example_05L38_05L39() 
+        public Example_05L36_05L37() 
             : base( 800, 600, GraphicsMode.Default, "OpenGL SuperBible - Texture Coordinates", 
                     0, DisplayDevice.Default, 4, 3, GraphicsContextFlags.Default )
         {
@@ -67,7 +67,8 @@ namespace SB6_CSharp
 
                 void main(void)
                 {
-                    color = texture(s, gl_FragCoord.xy / textureSize(s, 0)) * exposure;
+                    //color = texture(s, gl_FragCoord.xy / textureSize(s, 0)) * exposure;
+                    color = texelFetch( s, ivec2(gl_FragCoord.xy), 0 ) * exposure;
                 }
                 ";
 
@@ -116,8 +117,8 @@ namespace SB6_CSharp
             // Load texture from file
             // Note: If debugging from Visual Studio, debug command line options must be set to:
             //   -b "..\..\..\\"
-            Framework.KTX.Load( Program.BasePath + @"Media\Textures\Tree.ktx", (uint)_textureName );
-
+            Framework.KTX.Load( Program.BasePath + @"Media\Textures\Tree.ktx", ref _textureName );
+            
             // Now bind it to the context using the GL_TEXTURE_2D binding point
             GL.BindTexture( TextureTarget.Texture2D, _textureName );
         }

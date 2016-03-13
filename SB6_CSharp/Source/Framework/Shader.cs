@@ -66,7 +66,7 @@ namespace SB6_CSharp.Framework
         }
 
         //-------------------------------------------------------------------------------------
-        static public uint Link( int[] shaders, 
+        static public uint Link( uint[] shaders, 
                                     int count, 
                                     bool fDeleteShaders =true, 
                                     bool fCheckErrors =true )
@@ -78,7 +78,7 @@ namespace SB6_CSharp.Framework
                 shaderProgramName = GL.CreateProgram();
 
                 for( int i = 0; i < count; i++ )
-                    { GL.AttachShader( shaderProgramName, shaders[i] ); }
+                    { GL.AttachShader( shaderProgramName, (int)shaders[i] ); }
 
                 GL.LinkProgram( shaderProgramName );
 
