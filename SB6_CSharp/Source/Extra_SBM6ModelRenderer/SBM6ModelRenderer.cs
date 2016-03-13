@@ -48,9 +48,9 @@ namespace SB6_CSharp
         {
             uint[] shaders = new uint[2];
                 
-            shaders[0] = Framework.Shader.Load( Program.BasePath + @"Source\SBM6ModelRenderer\render.vs.glsl", 
+            shaders[0] = Framework.Shader.Load( Program.BasePath + @"Source\Extra_SBM6ModelRenderer\render.vs.glsl", 
                                                 ShaderType.VertexShader );
-            shaders[1] = Framework.Shader.Load( Program.BasePath + @"Source\SBM6ModelRenderer\render.fs.glsl", 
+            shaders[1] = Framework.Shader.Load( Program.BasePath + @"Source\Extra_SBM6ModelRenderer\render.fs.glsl", 
                                                 ShaderType.FragmentShader );
 
             _shaderProgramName = Framework.Shader.Link( shaders, shaders.Length );
