@@ -96,7 +96,7 @@ namespace SB6_CSharp.Framework
         }
 
         //-----------------------------------------------------------------------------------------
-        static public uint Load( string filename, ref uint tex )
+        static public void Load( string filename, ref uint tex )
         {
             BinaryReader file = null;
 
@@ -287,8 +287,6 @@ namespace SB6_CSharp.Framework
             }
 
             if( file != null ) { file.Close(); }
-
-            return tex;
         }
 
         //-----------------------------------------------------------------------------------------

@@ -31,7 +31,7 @@ singletri*            | Listing 2.8-2.9        | Single Triangle
 ---------------------------------------------------------------------------------------------------
 [CHAPTER 5]
 ---------------------------------------------------------------------------------------------------
-  {CSharp Only}       | Listing 5.1-5.5        |
+  {CSharp Only}       | Listing 5.1-5.5        | Copying data to buffer objects
   {CSharp Only}       | Listing 5.6-5.7        |
   {CSharp Only}       | Listing 5.8            |
   {CSharp Only}       | Listing 5.9-5.17 (A)   | Shared
@@ -42,9 +42,9 @@ singletri*            | Listing 2.8-2.9        | Single Triangle
 simpletexture         | Listing 5.33-5.35
 ktxview               | Listing 5.36-5.37      | Simple KTX viewer
 'simpletexcoords      | Listing 5.38-5.39      | Texture Coordinates
+alienrain*            | Listing 5.40 - 5.43    | Texture Arrays
 
 
-alienrain*            | Listing 5.41 - 5.43: Rendering loop for the alien rain sample
 'fragmentlist         | Listing 5.45-5.46
 ---------------------------------------------------------------------------------------------------
 [CHAPTER 6]

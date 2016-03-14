@@ -106,32 +106,46 @@ namespace SB6_CSharp
                                          0.25f,  0.25f, 0.5f, 1.0f };
             
             // *** set useAlternateCode to false to use alternate method to copy data to buffer object ***
-            bool useAlternateCode = true;
-            if( useAlternateCode )
+            int copyMethod = 2;
+            switch( copyMethod )
             {
-                // LISTING 5.2
-                // Put the data into the buffer at offset zero
-                GL.BufferSubData( BufferTarget.ArrayBuffer, IntPtr.Zero, (IntPtr)(data.Length * sizeof(float)), data );
-            }
-            else
-            {
-                // LISTING 5.3
-                // Get a pointer to the buffer’s data store
-                IntPtr ptr = GL.MapBuffer( BufferTarget.ArrayBuffer, BufferAccess.WriteOnly );
-
-                // Copy our data into it...
-                unsafe
-                {
-                    fixed ( float* src = &data[0] )
-                    {
-                        float* dst = (float*) ptr.ToPointer();
-                        for( int i=0; i<data.Length; i++ ) { dst[i] = src[i]; }
-                    }
+                case 0: {
+                    // LISTING 5.2
+                    // Put the data into the buffer at offset zero
+                    GL.BufferSubData( BufferTarget.ArrayBuffer, IntPtr.Zero, (IntPtr)(data.Length * sizeof(float)), data );
+                    break;
                 }
                 
-                // Tell OpenGL that we’re done with the pointer
-                GL.UnmapBuffer( BufferTarget.ArrayBuffer );
+                case 1: {
+                    // LISTING 5.3
+                    // Get a pointer to the buffer’s data store and copy our data into it
+                    IntPtr ptr = GL.MapBuffer( BufferTarget.ArrayBuffer, BufferAccess.WriteOnly );
+                    
+                    unsafe
+                    {
+                        fixed ( float* src = &data[0] )
+                        {
+                            float* dst = (float*) ptr.ToPointer();
+                            for( int i=0; i<data.Length; i++ ) { dst[i] = src[i]; }
+                        }
+                    }
+                
+                    // Tell OpenGL that we’re done with the pointer
+                    GL.UnmapBuffer( BufferTarget.ArrayBuffer );
+                    break;
+                } 
+                
+                case 2: {
+                    // Same as 'case: 1' but without the need to use 'unsafe' code
+                    IntPtr ptr = GL.MapBuffer( BufferTarget.ArrayBuffer, BufferAccess.WriteOnly );
+                    System.Runtime.InteropServices.Marshal.Copy( data, 0, ptr, data.Length );
+                    GL.UnmapBuffer( BufferTarget.ArrayBuffer );
+                    break;
+                }
             }
+
+            //// a third way is to use Marshal.ReadByte/Marshal.WriteByte
+            //// http://www.opentk.com/node/1330
 
             // Unbind the array buffer from the context
             GL.BindBuffer( BufferTarget.ArrayBuffer, 0 );
