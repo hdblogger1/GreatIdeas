@@ -178,14 +178,15 @@ namespace SB6_CSharp
             
             // Clear the window with given color
             GL.ClearBuffer( ClearBuffer.Color, 0, Statics.colorBlack );
-
+ 
             uint data = 0;
             GL.BindBuffer( BufferTarget.AtomicCounterBuffer, Buffers.Name( Buffers.Type.ATOMIC_COUNTER ) );
             GL.BufferSubData( BufferTarget.AtomicCounterBuffer, IntPtr.Zero, (IntPtr)sizeof(uint), ref data );
             GL.BindBuffer( BufferTarget.AtomicCounterBuffer, 0 );
- 
+
             // Use the program object we created earlier for rendering
             GL.UseProgram( _shaderProgramName );
+
             GL.BindBufferBase( BufferRangeTarget.AtomicCounterBuffer, 1, Buffers.Name( Buffers.Type.ATOMIC_COUNTER ) );
 
             GL.PointSize( 40.0f );

@@ -12,7 +12,7 @@ namespace SB6_CSharp
     /// Our OpenTK GameWindow derived application class which takes care of creating a window, 
     /// handling input, and displaying the rendered results to the user.
     /// </summary>
-    class Listing_05L40_05L46 : GameWindow
+    class Listing_05L40_05L43 : GameWindow
     {
         //-----------------------------------------------------------------------------------------
         /// <summary>
@@ -62,7 +62,7 @@ namespace SB6_CSharp
         }
 
         //-----------------------------------------------------------------------------------------
-        public Listing_05L40_05L46() 
+        public Listing_05L40_05L43() 
             : base( 800, 600, GraphicsMode.Default, "OpenGL SuperBible - Alien Rain", 
                     0, DisplayDevice.Default, 4, 3, GraphicsContextFlags.Default )
         {
