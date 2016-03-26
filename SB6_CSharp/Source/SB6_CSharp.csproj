@@ -33,11 +33,17 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Dependencies\OpenTK\$(Configuration)\OpenTK.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -54,6 +60,7 @@
     <Compile Include="Framework\SB6Debug.cs" />
     <Compile Include="Framework\TypeUtils.cs" />
     <Compile Include="Getopt.cs" />
+    <Compile Include="GLDirect.cs" />
     <Compile Include="Listing_02L01\Listing_02L01.cs" />
     <Compile Include="Listing_02L02\Listing_02L02.cs" />
     <Compile Include="Listing_02L03_02L07\Listing_02L03_02L07.cs" />
@@ -80,17 +87,15 @@
     <Compile Include="Listing_05L40_05L43\Listing_05L40_05L43.cs" />
     <Compile Include="Listing_05L44\Listing_05L44.cs" />
     <Compile Include="Listing_05L45_05L46\Listing_05L45_05L46.cs" />
+    <Compile Include="Listing_06L01_06L04\Listing_06L01_06L04.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Framework\Shader.cs" />
     <Compile Include="Extra_SBM6ModelRenderer\SBM6ModelRenderer.cs" />
     <Compile Include="Extra_Tunnel\Tunnel.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Local\opentk-2014-07-23\Source\OpenTK\OpenTK.csproj">
-      <Project>{A37A7E14-0000-0000-0000-000000000000}</Project>
-      <Name>OpenTK</Name>
-    </ProjectReference>
+    <Compile Include="Extra_DebugMessages\DebugMessages.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Extra_SBM6ModelRenderer\render.fs.glsl" />
@@ -113,7 +118,6 @@
     <None Include="Listing_05L45_05L46\resolve.fs.glsl" />
     <None Include="Listing_05L45_05L46\resolve.vs.glsl" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

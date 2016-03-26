@@ -73,9 +73,9 @@ namespace SB6_CSharp
         {
             uint[] shaders = new uint[2];
                 
-            shaders[0] = Framework.Shader.Load( Program.BasePath + @"Source\Listing_05L40_05L46\render.vs.glsl", 
+            shaders[0] = Framework.Shader.Load( Program.BasePath + @"Source\Listing_05L40_05L43\render.vs.glsl", 
                                                 ShaderType.VertexShader );
-            shaders[1] = Framework.Shader.Load( Program.BasePath + @"Source\Listing_05L40_05L46\render.fs.glsl", 
+            shaders[1] = Framework.Shader.Load( Program.BasePath + @"Source\Listing_05L40_05L43\render.fs.glsl", 
                                                 ShaderType.FragmentShader );
 
             _shaderPrograms.Name = Framework.Shader.Link( shaders, shaders.Length );

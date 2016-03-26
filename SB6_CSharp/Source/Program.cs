@@ -47,8 +47,12 @@ namespace SB6_CSharp
         }
 
         //-----------------------------------------------------------------------------------------
+        [STAThread]
         static void Main(string[] args)
         {
+            //TextWriterTraceListener debugLog = new TextWriterTraceListener(Console.Out);
+            //Debug.Listeners.Add(debugLog);
+            
             // Initialize OpenTK and make sure it's 'Disposed' of properly.
             using( Toolkit.Init() )
             {
@@ -61,6 +65,7 @@ namespace SB6_CSharp
                 // Initialize our Example window and make sure it's 'Disposed' of properly.
 
                 //using( var example = new BasicAtomicCounters() )
+                //using( var example = new DebugMessages() )
                 //using( var example = new SBM6ModelRenderer() )
                 //using( var example = new Tunnel() )
                 //using( var example = new WrapModes() )
@@ -90,7 +95,8 @@ namespace SB6_CSharp
                 //using( var example = new Listing_05L38_05L39() )
                 //using( var example = new Listing_05L40_05L43() )
                 //using( var example = new Listing_05L44() )
-                using( var example = new Listing_05L45_05L46() )
+                //using( var example = new Listing_05L45_05L46() )
+                using( var example = new Listing_06L01_06L04() )
                 {
                     string strVersion = GL.GetString( StringName.Version );
                     Console.WriteLine( strVersion );
@@ -98,6 +104,8 @@ namespace SB6_CSharp
                 }
                 
             }
+            //debugLog.Flush();
+            //debugLog.Close();
         }
     }
 }

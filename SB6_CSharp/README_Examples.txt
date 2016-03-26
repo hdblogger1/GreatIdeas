@@ -48,11 +48,12 @@ alienrain*            | Listing 5.40 - 5.43    | Texture Arrays
 ---------------------------------------------------------------------------------------------------
 [CHAPTER 6]
 ---------------------------------------------------------------------------------------------------
+'programinfo          | Listing 6.1 - 6.4      | Getting program information
 
 
 
-'programinfo          | Listing 6.4
-subroutines           | Listing 6.6: Setting values of subroutine uniforms
+subroutines           | Listing 6.5 - 6.6      | Setting values of subroutine uniforms
+                      | Listing 6.7            | Saving and loading program binaries
 ---------------------------------------------------------------------------------------------------
 [CHAPTER 7]
 ---------------------------------------------------------------------------------------------------
@@ -130,6 +131,7 @@ raytracer*            | Listing 12.38: Ray-plane intersection test
 [EXTRAS]
 ---------------------------------------------------------------------------------------------------
   {CSharp Only}       | BasicAtomicCounters    | Basic atomic counters
+  {CSharp Only}       | DebugMessages          | Debug message callbacks (!!!NOT WORKING!!!)
 sb6mrender            | SBM6ModelRenderer      | Simple render for SBM6 model files (arcball still needs implementing)
 tunnel*               | Tunnel                 | Figure 5.9: A tunnel rendered with three textures and mipmapping
 wrapmodes             | WrapModes              | Figure 5.10: Example of texture coordinate wrapping modes
