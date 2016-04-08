@@ -1,4 +1,8 @@
-﻿using System;
+﻿//=================================================================================================
+// The code herein has been adapted from the book "OpenGL SuperBible - Sixth Edition" and its
+// accompanying C++ example source code. Please see 'Copyright_SB6.txt' for copyright information.
+//=================================================================================================
+using System;
 using System.Drawing;
 using OpenTK;
 using OpenTK.Graphics;

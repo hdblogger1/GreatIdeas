@@ -25,7 +25,7 @@ namespace SB6_CSharp
 
         private struct ShaderPrograms
         {
-            public uint Name;
+            public int Name;
         }
         private ShaderPrograms _shaderPrograms;
 
@@ -38,13 +38,13 @@ namespace SB6_CSharp
 
         private struct Textures
         {
-            public uint Wall;
-            public uint Ceiling;
-            public uint Floor;
+            public int Wall;
+            public int Ceiling;
+            public int Floor;
         }
         private Textures _textures;
 
-        private uint _vao;
+        private int _vao;
 
         //-----------------------------------------------------------------------------------------
         public Tunnel() 
@@ -56,7 +56,7 @@ namespace SB6_CSharp
         //-----------------------------------------------------------------------------------------
         private bool _InitProgram()
         {
-            uint[] shaders = new uint[2];
+            int[] shaders = new int[2];
                 
             shaders[0] = Framework.Shader.Load( Program.BasePath + @"Source\Extra_Tunnel\render.vs.glsl", 
                                                 ShaderType.VertexShader );
@@ -90,8 +90,8 @@ namespace SB6_CSharp
             Framework.KTX.Load( Program.BasePath + @"Media\Textures\ceiling.ktx", ref _textures.Ceiling );
             Framework.KTX.Load( Program.BasePath + @"Media\Textures\floor.ktx", ref _textures.Floor );
 
-            uint[] textures = new uint[] { _textures.Wall, _textures.Ceiling, _textures.Floor };
-            foreach( uint tex in textures )
+            int[] textures = new int[] { _textures.Wall, _textures.Ceiling, _textures.Floor };
+            foreach( int tex in textures )
             {
                 GL.BindTexture( TextureTarget.Texture2D, tex );
                 int[] filters = new int[] { (int)TextureMinFilter.LinearMipmapLinear, (int)TextureMinFilter.Linear };
@@ -134,7 +134,7 @@ namespace SB6_CSharp
                                                                        Width / Height, 0.1f, 100.0f );
             GL.Uniform1( _uniforms.Offset, currentTime * 0.003f );
 
-            uint[] textures = new uint[] 
+            int[] textures = new int[] 
             { 
                 _textures.Wall, 
                 _textures.Floor, 

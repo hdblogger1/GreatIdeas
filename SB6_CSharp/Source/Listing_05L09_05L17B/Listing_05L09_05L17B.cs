@@ -1,4 +1,9 @@
-﻿//With USE_BOUNDED_LAYOUT defined, the vertex shader will use a 'standard' (std140) uniform block
+﻿//=================================================================================================
+// The code herein has been adapted from the book "OpenGL SuperBible - Sixth Edition" and its
+// accompanying C++ example source code. Please see 'Copyright_SB6.txt' for copyright information.
+//=================================================================================================
+
+//With USE_BOUNDED_LAYOUT defined, the vertex shader will use a 'standard' (std140) uniform block
 //which is bound to a fixed uniform block binding point. With it *NOT* defined, the vertex shader 
 //will use a 'standard' (std140) uniform block that is unbounded.
 #define USE_BOUNDED_LAYOUT

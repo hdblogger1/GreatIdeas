@@ -49,21 +49,21 @@ alienrain*            | Listing 5.40 - 5.43    | Texture Arrays
 [CHAPTER 6]
 ---------------------------------------------------------------------------------------------------
 'programinfo          | Listing 6.1 - 6.4      | Getting program information
-
-
-
 subroutines           | Listing 6.5 - 6.6      | Setting values of subroutine uniforms
-                      | Listing 6.7            | Saving and loading program binaries
+  {CSharp Only}       | Listing 6.7            | Saving and loading program binaries
 ---------------------------------------------------------------------------------------------------
 [CHAPTER 7]
 ---------------------------------------------------------------------------------------------------
-'msaanative           | Listing 7.2-7.3
-indexedcube           | ?Listing 7.2?: Setting up indexed cube geometry
-grass                 | Figure 7.7: The final field of grass
-instancedattribs      | ?Listing 7.7?: Simple vertex shader with per-vertex color
-multidrawindirect     | ?Listing 7.10?: Example use of an indirect draw command
-springmass*           | Listing 7.16: Spring-mass system vertex setup
-clipdistance          | ?Listing 7.20?: Clipping an object against a plane and a sphere
+   ?????              | Listing 7.1            | Multiple vertex attributes
+indexedcube           | Listing 7.2 - 7.3      | Setting up indexed cube geometry
+grass                 | Listing 7.4 - 7.6      | Drawing the same geometry many times
+   ?????              | Listing 7.7            | Vertex shader with per-vertex color
+instancedattribs      | Listing 7.8 - 7.9      | Instanced vertex shader attributes
+   ?????              | Listing 7.10           | Example use of indirect draw command
+multidrawindirect     | Listing 7.11 - 7.15    | Mulitple indirect drawing commands
+springmass*           | Listing 7.16 - 7.19    | Transform feedback
+
+clipdistance          | Listing 7.20           | Object clipping
 ---------------------------------------------------------------------------------------------------
 [CHAPTER 8]
 ---------------------------------------------------------------------------------------------------
@@ -89,6 +89,7 @@ gslayered*            | Listing 9.8: Setting up a layered framebuffer
 polygonsmooth         | Figure 9.10 Antialiasing using polygon smoothing
 stereo                | Listing 9.15: Drawing into a stereo window
 linesmooth            | Listing 9.18 Turning on line smoothing
+'msaanative           | Listing 9.19        | 
 sampleshading         | ?Listing 9.22?: Fragment shader producing high-frequency output
 hdrtonemap*           | ?Listing 9.24?: Applying simple exposure coefficient to an HDR
 hdrexposure           | ?Listing 9.24?: Applying simple exposure coefficient to an HDR

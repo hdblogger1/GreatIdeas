@@ -96,7 +96,7 @@ namespace SB6_CSharp.Framework
         }
 
         //-----------------------------------------------------------------------------------------
-        static public void Load( string filename, ref uint tex )
+        static public void Load( string filename, ref int tex )
         {
             BinaryReader file = null;
 
@@ -290,7 +290,7 @@ namespace SB6_CSharp.Framework
         }
 
         //-----------------------------------------------------------------------------------------
-        static public bool Save( string filename, TextureTarget target, uint tex )
+        static public bool Save( string filename, TextureTarget target, int tex )
         {
             KtxHeader hdr = new KtxHeader();
             Array.Copy( _identifier, hdr.identifier, _identifier.Length );

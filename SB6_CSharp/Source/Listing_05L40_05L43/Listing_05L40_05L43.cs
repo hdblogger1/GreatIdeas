@@ -1,4 +1,8 @@
-﻿using System;
+﻿//=================================================================================================
+// The code herein has been adapted from the book "OpenGL SuperBible - Sixth Edition" and its
+// accompanying C++ example source code. Please see 'Copyright_SB6.txt' for copyright information.
+//=================================================================================================
+using System;
 using System.Drawing;
 using System.Diagnostics;
 using OpenTK;
@@ -25,25 +29,25 @@ namespace SB6_CSharp
 
         private struct ShaderPrograms
         {
-            public uint Name;
+            public int Name;
         }
         private ShaderPrograms _shaderPrograms;
 
         private struct Buffers
         {
-            public uint rainBuffer;
+            public int rainBuffer;
         }
         private Buffers _buffer;
 
         private struct Textures
         {
-            public uint Name;
+            public int Name;
         }
         private Textures _textures;
 
-        private uint _vao;
+        private int _vao;
 
-        private static uint _dropletSeed = 0x13371337;
+        private static int _dropletSeed = 0x13371337;
         private float[] _dropletXOffset = new float[256];
         private float[] _dropletRotSpeed = new float[256];
         private float[] _dropletFallSpeed = new float[256];
@@ -51,7 +55,7 @@ namespace SB6_CSharp
         //-----------------------------------------------------------------------------------------
         public static float _RandomFloat()
         {
-            uint   tmp;
+            int   tmp;
 
             _dropletSeed *= 16807;
             tmp = _dropletSeed ^ (_dropletSeed >> 4) ^ (_dropletSeed << 15);
@@ -71,7 +75,7 @@ namespace SB6_CSharp
         //-----------------------------------------------------------------------------------------
         private bool _InitProgram()
         {
-            uint[] shaders = new uint[2];
+            int[] shaders = new int[2];
                 
             shaders[0] = Framework.Shader.Load( Program.BasePath + @"Source\Listing_05L40_05L43\render.vs.glsl", 
                                                 ShaderType.VertexShader );

@@ -10,21 +10,57 @@ namespace SB6_CSharp.Framework
     public class TypeUtils
     {
         //-----------------------------------------------------------------------------------------
-        public static int SizeOf<T>() { return Marshal.SizeOf( typeof(T) ); }
+        public static int SizeOf<T>()
+        { 
+            return Marshal.SizeOf( typeof(T) ); 
+        }
         
         //-----------------------------------------------------------------------------------------
-        public static int FromBytes<T>( byte[] bytes, int offset, out T obj )
+        public static int FromBytes<T>( byte[] bytes, int offset, out T data )
         {
             int sizeConverted = 0;
-            obj = default(T);
+            data = default(T);
 
             // Pin the managed memory, copy out the data and then unpin it
             GCHandle handle = GCHandle.Alloc( bytes, GCHandleType.Pinned );
             try 
             {
                 IntPtr ptr = handle.AddrOfPinnedObject();
-                obj = (T)Marshal.PtrToStructure( IntPtr.Add( ptr, offset ), typeof(T) );
+                data = (T)Marshal.PtrToStructure( IntPtr.Add( ptr, offset ), typeof(T) );
                 sizeConverted = SizeOf<T>();
+            } 
+            finally 
+            {
+                handle.Free();
+            }
+
+            return sizeConverted;
+        }
+
+        //-----------------------------------------------------------------------------------------
+        public static int FromBytes<T>( byte[] bytes, int offset, out T[] data )
+        {
+            int sizeConverted = 0;
+            data = default(T[]);            
+            int bytesRemaining = bytes.Length;
+            
+            // Pin the managed memory, copy out the data and then unpin it
+            GCHandle handle = GCHandle.Alloc( bytes, GCHandleType.Pinned );
+            try 
+            {
+                List<T> elements   = new List<T>();
+                int elementSize    = SizeOf<T>();
+                IntPtr ptr         = handle.AddrOfPinnedObject();
+
+                while( bytesRemaining >= elementSize )
+                {
+                    T element = (T)Marshal.PtrToStructure( IntPtr.Add( ptr, offset + sizeConverted ), typeof(T) );
+                    elements.Add( element );
+                    sizeConverted += elementSize;
+                    bytesRemaining -= elementSize;
+                }
+
+                data = elements.ToArray();
             } 
             finally 
             {
@@ -56,6 +92,32 @@ namespace SB6_CSharp.Framework
             return sizeConverted; 
         }
 
+        //-----------------------------------------------------------------------------------------
+        public static int ToBytes<T>( T[] data, out byte[] bytes )
+        {
+            int sizeConverted = 0;
+            int elementSize = SizeOf<T>();
+            bytes = new byte[elementSize * data.Length];
+
+            // Pin the managed memory, copy out the data and then unpin it
+            GCHandle handle = GCHandle.Alloc( bytes, GCHandleType.Pinned );
+            try 
+            {
+                IntPtr bytesPtr = handle.AddrOfPinnedObject();
+
+                foreach( T element in data )
+                {
+                    Marshal.StructureToPtr( element, bytesPtr + sizeConverted, false );
+                    sizeConverted += elementSize;
+                }
+            } 
+            finally 
+            {
+                handle.Free();
+            }
+
+            return sizeConverted; 
+        }
 
         //-----------------------------------------------------------------------------------------
         public static int FromBinaryReader<T>( BinaryReader reader, out T obj )

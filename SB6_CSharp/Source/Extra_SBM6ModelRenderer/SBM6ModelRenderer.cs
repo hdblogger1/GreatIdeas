@@ -26,13 +26,13 @@ namespace SB6_CSharp
         }
         
         //-----------------------------------------------------------------------------------------
-        private uint _shaderProgramName;
+        private int _shaderProgramName;
 
         private int _mvLocation;
         private int _projLocation;
 
-        private uint _texColorName;
-        private uint _texNormalName;
+        private int _texColorName;
+        private int _texNormalName;
 
         private Framework.SBM6Model _model;
 
@@ -46,7 +46,7 @@ namespace SB6_CSharp
         //-----------------------------------------------------------------------------------------
         private bool _InitProgram()
         {
-            uint[] shaders = new uint[2];
+            int[] shaders = new int[2];
                 
             shaders[0] = Framework.Shader.Load( Program.BasePath + @"Source\Extra_SBM6ModelRenderer\render.vs.glsl", 
                                                 ShaderType.VertexShader );

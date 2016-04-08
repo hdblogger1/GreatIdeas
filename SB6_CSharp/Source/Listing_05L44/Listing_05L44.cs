@@ -1,4 +1,8 @@
-﻿using System;
+﻿//=================================================================================================
+// The code herein has been adapted from the book "OpenGL SuperBible - Sixth Edition" and its
+// accompanying C++ example source code. Please see 'Copyright_SB6.txt' for copyright information.
+//=================================================================================================
+using System;
 using System.Drawing;
 using System.Diagnostics;
 using OpenTK;
@@ -19,15 +23,15 @@ namespace SB6_CSharp
         //-----------------------------------------------------------------------------------------
         private struct ShaderPrograms
         {
-            public uint LoadAndStore;
-            public uint Display;
+            public int LoadAndStore;
+            public int Display;
         }
         private ShaderPrograms _shaderPrograms;
 
         private struct Textures
         {
-            public uint InputImage;
-            public uint OutputImage;
+            public int InputImage;
+            public int OutputImage;
         }
         private Textures _textures;
 
@@ -55,7 +59,7 @@ namespace SB6_CSharp
         //-----------------------------------------------------------------------------------------
         private bool _InitProgram()
         {
-            uint[] shaders = new uint[3];
+            int[] shaders = new int[3];
                 
             shaders[0] = Framework.Shader.Load( Program.BasePath + @"Source\Listing_05L44\loadstoredisplay.vs.glsl", 
                                                 ShaderType.VertexShader );
@@ -64,8 +68,8 @@ namespace SB6_CSharp
             shaders[2] = Framework.Shader.Load( Program.BasePath + @"Source\Listing_05L44\display.fs.glsl", 
                                                 ShaderType.FragmentShader );
             
-            _shaderPrograms.LoadAndStore = Framework.Shader.Link( new uint[] { shaders[0], shaders[1] }, 2 );
-            _shaderPrograms.Display      = Framework.Shader.Link( new uint[] { shaders[0], shaders[2] }, 2 );
+            _shaderPrograms.LoadAndStore = Framework.Shader.Link( new int[] { shaders[0], shaders[1] }, 2 );
+            _shaderPrograms.Display      = Framework.Shader.Link( new int[] { shaders[0], shaders[2] }, 2 );
 
             GL.GenVertexArrays( 1, out _vao );
             GL.BindVertexArray( _vao );

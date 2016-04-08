@@ -1,4 +1,8 @@
-﻿using System;
+﻿//=================================================================================================
+// The code herein has been adapted from the book "OpenGL SuperBible - Sixth Edition" and its
+// accompanying C++ example source code. Please see 'Copyright_SB6.txt' for copyright information.
+//=================================================================================================
+using System;
 using System.Drawing;
 using System.Diagnostics;
 
@@ -97,7 +101,7 @@ namespace SB6_CSharp
                 ";
         }
 
-        private uint _programPipeline;
+        private int _programPipeline;
         private int  _vao;
 
         //-----------------------------------------------------------------------------------------
@@ -109,7 +113,7 @@ namespace SB6_CSharp
         }
 
         //-----------------------------------------------------------------------------------------
-        private void _PrintInterfaceInformation( uint program, ProgramInterface iface )
+        private void _PrintInterfaceInformation( int program, ProgramInterface iface )
         {
             string[] propName = new string[] { "type", "location", "array size" };
             System.Text.StringBuilder name = new  System.Text.StringBuilder();
@@ -120,7 +124,7 @@ namespace SB6_CSharp
             int interfaces;
             GL.GetProgramInterface( program, iface, ProgramInterfaceParameter.ActiveResources, out interfaces );
 
-            for( uint i = 0; i < interfaces; i++ )
+            for( int i = 0; i < interfaces; i++ )
             {
                 int dummy;
                 string typeName;
@@ -147,14 +151,14 @@ namespace SB6_CSharp
         //-----------------------------------------------------------------------------------------
         private bool _InitProgram()
         {
-            uint vertexShader, fragmentShader;
-            uint vertexProgram, fragmentProgram;
+            int vertexShader, fragmentShader;
+            int vertexProgram, fragmentProgram;
 
             // Create a vertex shader
-            vertexShader = (uint)GL.CreateShader( ShaderType.VertexShader );
+            vertexShader = GL.CreateShader( ShaderType.VertexShader );
             
             // Attach source and compile
-            GL.ShaderSource( (int)vertexShader, Statics.vertexShaderSource );
+            GL.ShaderSource( vertexShader, Statics.vertexShaderSource );
             GL.CompileShader( vertexShader );
 
             // [Listing 6.1]
@@ -163,7 +167,7 @@ namespace SB6_CSharp
             Console.WriteLine( GL.GetShaderInfoLog( (int)vertexShader ) );
 
             // Create a program for our vertex stage and attach the vertex shader to it
-            vertexProgram = (uint)GL.CreateProgram();
+            vertexProgram = GL.CreateProgram();
             GL.AttachShader( vertexProgram, vertexShader );
 
             // Important part - set the GL_PROGRAM_SEPARABLE flag to GL_TRUE *then* link
@@ -174,20 +178,20 @@ namespace SB6_CSharp
             // Did our program linked correctly? Try commenting out the declaration block for
             // gl_PerVertex in our vertex shader and see what error message is displayed on the 
             // console
-            Console.WriteLine( GL.GetProgramInfoLog( (int)vertexProgram ) );
+            Console.WriteLine( GL.GetProgramInfoLog( vertexProgram ) );
             
             // Delete the vertex shader as the program has it now
             GL.DeleteShader( vertexShader );
 
             // Now do the same with a fragment shader
-            fragmentShader = (uint)GL.CreateShader( ShaderType.FragmentShader );
+            fragmentShader = GL.CreateShader( ShaderType.FragmentShader );
             GL.ShaderSource( (int)fragmentShader, Statics.fragmentShaderSource );
             GL.CompileShader( fragmentShader );
-            fragmentProgram = (uint)GL.CreateProgram();
+            fragmentProgram = GL.CreateProgram();
             GL.AttachShader( fragmentProgram, fragmentShader );
             GL.ProgramParameter( fragmentProgram, ProgramParameterName.ProgramSeparable, (int)All.True );
             GL.LinkProgram( fragmentProgram );
-            Console.WriteLine( GL.GetProgramInfoLog( (int)fragmentProgram ) );
+            Console.WriteLine( GL.GetProgramInfoLog( fragmentProgram ) );
 
             GL.DeleteShader( fragmentShader );
 

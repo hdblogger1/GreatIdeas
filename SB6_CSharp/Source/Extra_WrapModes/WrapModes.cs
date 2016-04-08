@@ -34,7 +34,7 @@ namespace SB6_CSharp
 
         private struct ShaderPrograms
         {
-            public uint Name;
+            public int Name;
         }
         private ShaderPrograms _shaderPrograms;
 
@@ -46,11 +46,11 @@ namespace SB6_CSharp
 
         private struct Textures
         {
-            public uint Name;
+            public int Name;
         }
         private Textures _textures;
 
-        private uint _vao;
+        private int _vao;
 
         //-----------------------------------------------------------------------------------------
         public WrapModes() 
@@ -62,7 +62,7 @@ namespace SB6_CSharp
         //-----------------------------------------------------------------------------------------
         private bool _InitProgram()
         {
-            uint[] shaders = new uint[2];
+            int[] shaders = new int[2];
                 
             shaders[0] = Framework.Shader.Load( Program.BasePath + @"Source\Extra_WrapModes\render.vs.glsl", 
                                                 ShaderType.VertexShader );

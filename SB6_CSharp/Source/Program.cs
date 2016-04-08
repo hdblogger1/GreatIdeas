@@ -1,4 +1,8 @@
-﻿using System;
+﻿//=================================================================================================
+// The code herein has been adapted from the book "OpenGL SuperBible - Sixth Edition" and its
+// accompanying C++ example source code. Please see 'Copyright_SB6.txt' for copyright information.
+//=================================================================================================
+using System;
 using System.Drawing;
 using System.Diagnostics;
 using OpenTK;
@@ -49,10 +53,7 @@ namespace SB6_CSharp
         //-----------------------------------------------------------------------------------------
         [STAThread]
         static void Main(string[] args)
-        {
-            //TextWriterTraceListener debugLog = new TextWriterTraceListener(Console.Out);
-            //Debug.Listeners.Add(debugLog);
-            
+        {           
             // Initialize OpenTK and make sure it's 'Disposed' of properly.
             using( Toolkit.Init() )
             {
@@ -96,16 +97,20 @@ namespace SB6_CSharp
                 //using( var example = new Listing_05L40_05L43() )
                 //using( var example = new Listing_05L44() )
                 //using( var example = new Listing_05L45_05L46() )
-                using( var example = new Listing_06L01_06L04() )
+                //using( var example = new Listing_06L01_06L04() )
+                //using( var example = new Listing_06L05_06L06() )
+                //using( var example = new Listing_06L07() )
+                //using( var example = new Listing_07L02_07L03() )
+                //using( var example = new Listing_07L04_07L06() )
+                //using( var example = new Listing_07L08_07L09() )
+                //using( var example = new Listing_07L11_07L15() )
+                using( var example = new Listing_07L16_07L19() )
                 {
                     string strVersion = GL.GetString( StringName.Version );
                     Console.WriteLine( strVersion );
                     example.Run();
                 }
-                
             }
-            //debugLog.Flush();
-            //debugLog.Close();
         }
     }
 }

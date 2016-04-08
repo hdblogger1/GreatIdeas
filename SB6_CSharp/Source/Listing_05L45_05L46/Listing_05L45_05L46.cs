@@ -1,4 +1,8 @@
-﻿using System;
+﻿//=================================================================================================
+// The code herein has been adapted from the book "OpenGL SuperBible - Sixth Edition" and its
+// accompanying C++ example source code. Please see 'Copyright_SB6.txt' for copyright information.
+//=================================================================================================
+using System;
 using System.Drawing;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
@@ -27,23 +31,23 @@ namespace SB6_CSharp
 
         private struct ShaderPrograms
         {
-            public uint Clear;
-            public uint Append;
-            public uint Resolve;
+            public int Clear;
+            public int Append;
+            public int Resolve;
         }
         private ShaderPrograms _shaderPrograms;
 
         private struct Buffers
         {
-            public uint Uniforms;
-            public uint Fragment;
-            public uint AtomicCounter;
+            public int Uniforms;
+            public int Fragment;
+            public int AtomicCounter;
         }
         private Buffers _buffers;
 
         private struct Textures
         {
-            public uint HeadPointerImage;
+            public int HeadPointerImage;
         }
         private Textures _textures;
 
@@ -67,7 +71,7 @@ namespace SB6_CSharp
             Matrix4 projMatrix;
         }
 
-        private uint _vao;
+        private int _vao;
 
         //-----------------------------------------------------------------------------------------
         public Listing_05L45_05L46() 
@@ -79,7 +83,7 @@ namespace SB6_CSharp
         //-----------------------------------------------------------------------------------------
         private bool _InitProgram()
         {
-            uint[] shaders = new uint[2];
+            int[] shaders = new int[2];
                 
             shaders[0] = Framework.Shader.Load( Program.BasePath + @"Source\Listing_05L45_05L46\clear.vs.glsl", 
                                                 ShaderType.VertexShader );

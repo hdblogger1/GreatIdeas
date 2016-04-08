@@ -1,4 +1,8 @@
-﻿using System;
+﻿//=================================================================================================
+// The code herein has been adapted from the book "OpenGL SuperBible - Sixth Edition" and its
+// accompanying C++ example source code. Please see 'Copyright_SB6.txt' for copyright information.
+//=================================================================================================
+using System;
 using System.Drawing;
 using System.Diagnostics;
 using OpenTK;
@@ -28,7 +32,7 @@ namespace SB6_CSharp
         private int _shaderProgramName;
         private int _vertexArrayName;
 
-        private uint _textureName;
+        private int _textureName;
 
         //-----------------------------------------------------------------------------------------
         public Listing_05L36_05L37() 

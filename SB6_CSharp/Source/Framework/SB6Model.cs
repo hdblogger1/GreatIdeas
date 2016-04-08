@@ -346,9 +346,13 @@ namespace SB6_CSharp.Framework
                         case ChunkType_e.SubObjectList:
                             dataOffset += ChunkSubObjectList.FromBytes( data, dataOffset, out subObjectChunk );
                             break;
+                        case ChunkType_e.Comment:
+                            dataOffset += (int)chunkHeader.Size;
+                            break;
                         default:
                             throw new SBM6ModelException( "Unknown SBM6 chunk encountered." );
                     }
+                    
                 }
 
                 if( subObjectChunk != null )

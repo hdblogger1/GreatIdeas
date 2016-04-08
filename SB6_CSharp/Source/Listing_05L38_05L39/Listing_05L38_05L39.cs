@@ -1,4 +1,8 @@
-﻿using System;
+﻿//=================================================================================================
+// The code herein has been adapted from the book "OpenGL SuperBible - Sixth Edition" and its
+// accompanying C++ example source code. Please see 'Copyright_SB6.txt' for copyright information.
+//=================================================================================================
+using System;
 using System.Drawing;
 using System.Diagnostics;
 using OpenTK;
@@ -47,7 +51,7 @@ namespace SB6_CSharp
 
         private struct ShaderPrograms
         {
-            public uint Name;
+            public int Name;
         }
         private ShaderPrograms _shaderPrograms;
 
@@ -60,7 +64,7 @@ namespace SB6_CSharp
 
         private struct Textures
         {
-            public uint[] Array;
+            public int[] Array;
         }
         private Textures _textures;
         private int _textureIndex = 0;
@@ -77,7 +81,7 @@ namespace SB6_CSharp
         //-----------------------------------------------------------------------------------------
         private bool _InitProgram()
         {
-            uint[] shaders = new uint[2];
+            int[] shaders = new int[2];
                 
             shaders[0] = Framework.Shader.Load( Program.BasePath + @"Source\Listing_05L38_05L39\render.vs.glsl", 
                                                 ShaderType.VertexShader );
@@ -96,7 +100,7 @@ namespace SB6_CSharp
         //-----------------------------------------------------------------------------------------
         private void _InitTextures()
         {
-            _textures.Array = new uint[2];
+            _textures.Array = new int[2];
 
             // Generate a name for texture #1 and manually create it
             GL.GenTextures( 1, out _textures.Array[0] );

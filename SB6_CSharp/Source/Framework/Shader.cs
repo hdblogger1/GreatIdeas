@@ -21,21 +21,17 @@ namespace SB6_CSharp.Framework
         }
 
         //-------------------------------------------------------------------------------------
-        static public uint Load( string filename, ShaderType shaderType, bool fCheckErrors =true )
+        static public int Compile( ShaderType shaderType, string shaderSource, bool fCheckErrors =true )
         {
             int shaderName = 0;
-            IOReader file = null;
 
             try
             {
-                file = new IOReader( filename );
-                string shaderText = file.ReadToEnd();
-
                 shaderName = GL.CreateShader( shaderType );
                 if( shaderName == 0 ) 
                     { throw new ShaderFileException( "Failed allocating memory for shader object." ); }
 
-                GL.ShaderSource( shaderName, shaderText );
+                GL.ShaderSource( shaderName, shaderSource );
                 GL.CompileShader( shaderName );
 
                 if( fCheckErrors )
@@ -49,27 +45,43 @@ namespace SB6_CSharp.Framework
                     }
                 }
             }
+            catch( ShaderFileException )
+            {
+                GL.DeleteShader( shaderName );
+                shaderName = 0;
+            }
+
+            return shaderName;
+        }
+
+        //-------------------------------------------------------------------------------------
+        static public int Load( string filename, ShaderType shaderType, bool fCheckErrors =true )
+        {
+            int shaderName = 0;
+            IOReader file = null;
+
+            try
+            {
+                file = new IOReader( filename );
+                string shaderText = file.ReadToEnd();
+
+                shaderName = Compile( shaderType, shaderText, fCheckErrors );
+            }
             catch( IOException e )
             {
                 Console.WriteLine( "Shader.File IO Exception: " + e.Message );
             }
-            catch( ShaderFileException e )
-            {
-                GL.DeleteShader( shaderName );
-                shaderName = 0;
-                Console.WriteLine( "Shader.File.Load Exception: " + e.Message );
-            }
 
             if( file != null ) { file.Close(); }
 
-            return (uint)shaderName;
+            return shaderName;
         }
 
         //-------------------------------------------------------------------------------------
-        static public uint Link( uint[] shaders, 
-                                    int count, 
-                                    bool fDeleteShaders =true, 
-                                    bool fCheckErrors =true )
+        static public int Link( int[] shaders, 
+                                int count, 
+                                bool fDeleteShaders =true, 
+                                bool fCheckErrors =true )
         {
             int shaderProgramName = 0;
 
@@ -103,7 +115,7 @@ namespace SB6_CSharp.Framework
                 Console.WriteLine( "Shader.File.Link Exception: " + e.Message );
             }
 
-            return (uint)shaderProgramName;
+            return shaderProgramName;
         }
     }
 }

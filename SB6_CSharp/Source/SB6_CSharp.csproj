@@ -74,6 +74,11 @@
     <Compile Include="Listing_03L11_03L12\Listing_03L11_03L12.cs" />
     <Compile Include="Listing_05L01_05L05\Listing_05L01_05L05.cs" />
     <Compile Include="Listing_05L06_05L07\Listing_05L06_05L07.cs" />
+    <Compile Include="Listing_07L04_07L06\Listing_07L04_07L06.cs" />
+    <Compile Include="Listing_07L08_07L09\Listing_07L08_07L09.cs" />
+    <Compile Include="Listing_07L11_07L15\Listing_07L11_07L15.cs" />
+    <Compile Include="Listing_07L16_07L19\Listing_07L16_07L19.cs" />
+    <Compile Include="Template.cs" />
     <Compile Include="Listing_05L08\Listing_05L08.cs" />
     <Compile Include="Listing_05L09_05L17A\Listing_05L09_05L17A.cs" />
     <Compile Include="Listing_05L09_05L17B\Listing_05L09_05L17B.cs" />
@@ -90,6 +95,9 @@
     <Compile Include="Listing_06L01_06L04\Listing_06L01_06L04.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Listing_06L05_06L06\Listing_06L05_06L06.cs" />
+    <Compile Include="Listing_06L07\Listing_06L07.cs" />
+    <Compile Include="Listing_07L02_07L03\Listing_07L02_07L03.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Framework\Shader.cs" />
@@ -117,7 +125,17 @@
     <None Include="Listing_05L45_05L46\append.vs.glsl" />
     <None Include="Listing_05L45_05L46\resolve.fs.glsl" />
     <None Include="Listing_05L45_05L46\resolve.vs.glsl" />
+    <None Include="Listing_06L05_06L06\subroutines.vs.glsl" />
+    <None Include="Listing_06L05_06L06\subroutines.fs.glsl" />
+    <None Include="Listing_07L04_07L06\grass.fs.glsl" />
+    <None Include="Listing_07L04_07L06\grass.vs.glsl" />
+    <None Include="Listing_07L11_07L15\asteroids.fs.glsl" />
+    <None Include="Listing_07L11_07L15\asteroids.vs.glsl" />
+    <None Include="Listing_07L16_07L19\update.vs.glsl" />
+    <None Include="Listing_07L16_07L19\render.fs.glsl" />
+    <None Include="Listing_07L16_07L19\render.vs.glsl" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

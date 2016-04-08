@@ -24,9 +24,23 @@ namespace SB6_CSharp.Framework
             return bufferData;
         }
 
-        public static void ByteArrayToOutput( byte[] bytes )
+        public static void ToOutput<T>( T data, string filename = "output.bin" )
         {
-            System.IO.FileStream fs = new System.IO.FileStream( "output.bin", System.IO.FileMode.Create );
+            byte[] buffer;
+            TypeUtils.ToBytes<T>( data, out buffer );
+            ByteArrayToOutput( buffer, filename );
+        }
+
+        public static void ToOutput<T>( T[] dataArray, string filename = "output.bin" )
+        {
+            byte[] buffer;
+            TypeUtils.ToBytes<T>( dataArray, out buffer );
+            ByteArrayToOutput( buffer, filename );
+        }
+
+        public static void ByteArrayToOutput( byte[] bytes, string filename = "output.bin" )
+        {
+            System.IO.FileStream fs = new System.IO.FileStream( filename, System.IO.FileMode.Create );
             System.IO.BinaryWriter file = new System.IO.BinaryWriter( fs );
             foreach( byte b in bytes )
             {
@@ -36,9 +50,9 @@ namespace SB6_CSharp.Framework
             fs.Close();
         }
         
-        public static byte[] ByteArrayFromOutput()
+        public static byte[] ByteArrayFromOutput( string filename = "output.bin" )
         {
-            System.IO.FileStream fs = new System.IO.FileStream( "output.bin", System.IO.FileMode.Open );
+            System.IO.FileStream fs = new System.IO.FileStream( filename, System.IO.FileMode.Open );
             System.IO.BinaryReader file = new System.IO.BinaryReader( fs );
 
             byte[] dataBytes = file.ReadBytes( (int)file.BaseStream.Length );
