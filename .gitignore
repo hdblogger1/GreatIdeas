@@ -1,2 +1,7 @@
 SB6_CSharp/Dependencies/*
 !SB6_CSharp/Dependencies/makelinks.cmd
+SB6_CSharp/Media/Objects
+SB6_CSharp/Media/Textures
+SB6_CSharp/SB6_CSharp.suo
+SB6_CSharp/Source/bin
+SB6_CSharp/Source/obj
