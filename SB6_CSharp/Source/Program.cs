@@ -27,7 +27,7 @@ namespace SB6_CSharp
             get { return _counter.ElapsedMilliseconds / 1000.0; } 
         }
 
-        private static string _basePath = @".\";
+        private static string _basePath = @"..\..\..\";
         public static string BasePath { get { return _basePath; } }
 
         //-----------------------------------------------------------------------------------------
@@ -51,6 +51,17 @@ namespace SB6_CSharp
         }
 
         //-----------------------------------------------------------------------------------------
+        public static void ExitExample( GameWindow example )
+        {
+            if( example != null ) 
+            { 
+                example.Exit();
+                Console.WriteLine( "Press any key to continue." );
+                Console.ReadKey();
+            }
+        }
+
+        //-----------------------------------------------------------------------------------------
         [STAThread]
         static void Main(string[] args)
         {           
@@ -70,8 +81,10 @@ namespace SB6_CSharp
                 //using( var example = new SBM6ModelRenderer() )
                 //using( var example = new Tunnel() )
                 //using( var example = new WrapModes() )
+                //using( var example = new BasicFeedback() )
+                //using( var example = new GeometryFeedback() )
 
-                //using( var example = new Listing_02L01() )
+                using( var example = new Listing_02L01() )
                 //using( var example = new Listing_02L02() )
                 //using( var example = new Listing_02L03_02L07() )
                 //using( var example = new Listing_02L08_02L09() )
@@ -104,10 +117,12 @@ namespace SB6_CSharp
                 //using( var example = new Listing_07L04_07L06() )
                 //using( var example = new Listing_07L08_07L09() )
                 //using( var example = new Listing_07L11_07L15() )
-                using( var example = new Listing_07L16_07L19() )
+                //using( var example = new Listing_07L16_07L19() )
                 {
+                    string strVendor = GL.GetString( StringName.Vendor );
                     string strVersion = GL.GetString( StringName.Version );
-                    Console.WriteLine( strVersion );
+                    string strRenderer = GL.GetString( StringName.Renderer );
+                    Console.WriteLine( strVendor + "\n" + strRenderer + "\n" + strVersion );
                     example.Run();
                 }
             }

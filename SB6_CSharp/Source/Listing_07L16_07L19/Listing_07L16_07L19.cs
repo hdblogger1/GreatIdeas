@@ -52,6 +52,7 @@ namespace SB6_CSharp
             Connection
         };
 
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
         private struct Vector4i
         {
             public int X;
@@ -301,11 +302,11 @@ namespace SB6_CSharp
                                    _vbos[(int)BufferType.PositionA + (iterationIndex & 1)] );
                 GL.BindBufferBase( BufferRangeTarget.TransformFeedbackBuffer, 1, 
                                    _vbos[(int)BufferType.VelocityA + (iterationIndex & 1)] );
-                GL.BeginTransformFeedback( BeginFeedbackMode.Points );
-                GL.DrawArrays( BeginMode.Points, 0, Statics.numPoints );
+                GL.BeginTransformFeedback( TransformFeedbackPrimitiveType.Points );
+                GL.DrawArrays( PrimitiveType.Points, 0, Statics.numPoints );
                 GL.EndTransformFeedback();
             }
-
+            GL.Flush();
             GL.Disable( EnableCap.RasterizerDiscard );
 
             GL.Viewport( 0, 0, Width, Height );
@@ -316,7 +317,7 @@ namespace SB6_CSharp
             if( _drawPointsFlag )
             {
                 GL.PointSize( 4.0f );
-                GL.DrawArrays( BeginMode.Points, 0, Statics.numPoints );
+                GL.DrawArrays( PrimitiveType.Points, 0, Statics.numPoints );
             }
 
             if( _drawLinesFlag )

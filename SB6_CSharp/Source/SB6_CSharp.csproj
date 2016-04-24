@@ -52,12 +52,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Extra_BasicAtomicCounters\BasicAtomicCounters.cs" />
+    <Compile Include="Extra_TransformFeedback\BasicFeedback.cs" />
+    <Compile Include="Extra_TransformFeedback\GeometryFeedback.cs" />
     <Compile Include="Extra_WrapModes\WrapModes.cs" />
     <Compile Include="Framework\KTX.cs" />
     <Compile Include="Framework\SB6Model.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Framework\SB6Debug.cs" />
+    <Compile Include="Framework\OpenTKEx.cs" />
     <Compile Include="Framework\TypeUtils.cs" />
     <Compile Include="Getopt.cs" />
     <Compile Include="GLDirect.cs" />
